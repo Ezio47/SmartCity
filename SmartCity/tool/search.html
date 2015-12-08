@@ -1,0 +1,303 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+
+    <style type="text/css">
+        .PropertiesTD {
+            
+            border-bottom: #91A7B4 1px solid;
+            border-top: #91A7B4 1px solid;
+            border-left: #91A7B4 1px solid;
+            border-right: #91A7B4 1px solid;
+            font-family: Arial;
+            font-size: 10pt;
+            font-weight: normal;
+        }
+
+        .PropertiesTDTop {
+            padding-left: 1px;
+            border-bottom: #c6cbce 1px solid;
+            font-family: Arial;
+            font-size: 12px;
+            font-weight: bold;
+            background-color: #e6e3e0;
+        }
+
+        .s12b {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 12pt;
+            font-style: normal;
+            font-weight: bold;
+            color: #000000;
+            text-decoration: none;
+        }
+
+        .font12 {
+            font-size: 12px;
+            color: #314a5f;
+        }
+
+        td {
+            font-style: normal;
+            font-weight: normal;
+            font-size: 11px;
+            font-family: Arial, Helvetica, sans-serif;
+            color: rgb(49,74,95);
+        }
+    </style>
+
+    <script src="../js/jquery-1.10.2.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var poiurl = window.location.href;
+        var allpoiurl = poiurl.substring(0, poiurl.lastIndexOf("/") + 1);
+        var selectValue = "";
+        //var _3dml = null;
+        
+        var names = ["建筑", "结构一层", "结构二层", "结构三层","结构屋顶","暖通一层","暖通二层","暖通三层","喷淋一层","喷淋二层","喷淋三层"];
+
+        var datas = [
+            "15#\\建筑\\QT",
+            "15#\\结构\\JF1",
+            "15#\\结构\\JF2",
+            "15#\\结构\\JF3",
+            "15#\\结构\\WD",
+            "15#\\暖通\\NF1",
+            "15#\\暖通\\NF2",
+            "15#\\暖通\\NF3",
+            "15#\\喷淋\\PF1",
+            "15#\\喷淋\\PF2",
+            "15#\\喷淋\\PF3"
+        ];
+
+        function getFeatureLayer(modeDir) {
+            var theMeshFeatureLayer = sgworld.ProjectTree.GetObject(sgworld.ProjectTree.FindItem(modeDir));
+            var _3dml = null;
+            for (var j = 0; j < theMeshFeatureLayer.FeatureLayers.Count; j++) {
+                var name = theMeshFeatureLayer.FeatureLayers.Item(j).TreeItem.Name;
+                //if (name == selectValue) {
+                if(modeDir==selectValue){
+                    _3dml = theMeshFeatureLayer.FeatureLayers.Item(j);
+                }
+            }
+            return _3dml;
+        }
+
+        function dqNameQuery() {
+
+            selectName = document.getElementById("NameQuery").value;
+            var _3dml = null;
+            for (var i = 0; i < datas.length; i++) {
+                _3dml = getFeatureLayer(datas[i]);
+                if (_3dml) {
+                    
+                    break;
+                }
+            }
+            if (!_3dml) {
+                alert("图层配置错误！");
+            }
+
+            var strTable;
+            strTable = "<table cellpadding ='0'  cellspacing='0'class = 'font12' style='width:100%;text-align:left;'>";
+
+          //  var box2D = _3dml.DataSourceInfo.BBox;
+
+            //var cVerticesArray = [
+            //    box2D.MinX, box2D.MaxY, 0,
+            //    box2D.MaxX, box2D.MaxY, 0,
+            //    box2D.MaxX, box2D.MinY, 0,
+            //    box2D.MinX, box2D.MinY, 0
+            //];
+
+            var box = [
+        116.272392, 39.680848, 0,
+        116.276996, 39.680908, 0,
+        116.279328, 39.678255, 0,
+        116.272868, 39.677862, 0
+            ];
+
+            var geo = sgworld.Creator.GeometryCreator.CreateLinearRingGeometry(box);
+            var cPolygonGeometry = sgworld.Creator.GeometryCreator.CreatePolygonGeometry(geo, null);
+            var features = _3dml.ExecuteSpatialQuery(cPolygonGeometry);
+
+            strTable += "<tr><td  class='PropertiesTD' >名称</td><td background=\"images\\mid.gif\"  class='PropertiesTD'>类型</td></tr>";
+
+            for (var i = 0; i < features.Count; i++) {
+                var theFeature = features(i);
+
+                var name = theFeature.FeatureAttributes.GetFeatureAttribute("Name").Value;
+                if (name.indexOf(selectName) >= 0) {
+
+                    var category = theFeature.FeatureAttributes.GetFeatureAttribute("Category_Name").Value;
+                    var FID = theFeature.ID;
+
+
+                    strTable += "<tr><td class='PropertiesTD'  background=\"images\\mid.gif\"  style=\"cursor: pointer; font-size:12px\" onclick=\"goToPosition('" + FID + "');\" onmouseout=\"style.color='#314a5f'\" onmouseover=\"style.color='#9cb4e4'\">&nbsp;&nbsp;" + name + "</td>";
+                    strTable += "<td class='PropertiesTD'  >" + category + "</td>";
+                    strTable += "</tr>";
+
+                }
+                else {
+                    //theFeature.Show = false;
+                }
+
+            }
+
+
+
+
+            //for (var i = 0; i < 358; i++)
+            //{
+            //    var theFeature = _3dml.ExecuteGetDataSourceFeatureIdQuery(i);
+            //    var name = theFeature.FeatureAttributes.GetFeatureAttribute("Name").Value;
+            //    if (name.indexOf(selectName) >= 0) {
+
+            //        var category = theFeature.FeatureAttributes.GetFeatureAttribute("Category_Name").Value;
+            //        var geo = theFeature.Geometry;
+
+            //        strTable += "<tr><td class='PropertiesTD'  width='30%'>" + name + "</td>";
+            //        strTable += "<td class='PropertiesTD'  background=\"images\\mid.gif\" width='68%' style=\"cursor: pointer; font-size:12px\" onclick=\"goToPosition(" + geo.X + "," + geo.Y + "," + geo.Z + ");\" onmouseout=\"style.color='#314a5f'\" onmouseover=\"style.color='#9cb4e4'\">&nbsp;&nbsp;" + category + "</td>";
+            //        strTable += "</tr>";
+
+            //    }
+            //    else {
+            //        theFeature.Show = false;
+            //    }
+
+            //}
+
+            document.getElementById("QueryContent").innerHTML = strTable;
+
+
+        }
+
+
+        var oldID = "";
+        var select = null;
+
+        function goToPosition(ID) {
+            if (oldID != "") {
+                var oldFeature = sgworld.ProjectTree.GetObject(oldID);
+                oldFeature.Tint.abgrColor = 0x00000000;
+            }
+
+            var feature = sgworld.ProjectTree.GetObject(ID);
+            feature.Tint.abgrColor = 0xFF0000FF;
+            sgworld.Navigate.FlyTo(ID, 10);
+            oldID = ID;
+        }
+
+        function closeClaen1(modeDir,name) {
+            try {
+                var theMeshFeatureLayer = sgworld.ProjectTree.GetObject(sgworld.ProjectTree.FindItem(modeDir));
+                var _3dml = null;
+                for (var j = 0; j < theMeshFeatureLayer.FeatureLayers.Count; j++) {
+                  //  var name = theMeshFeatureLayer.FeatureLayers.Item(j).TreeItem.Name;
+                    // value.substring(value.indexOf('#') + 1, value.indexOf('-'));
+                    select.options.add(new Option(name, modeDir));
+                    sgworld.ProjectTree.SetVisibility(theMeshFeatureLayer.ID, true);
+                }
+            } catch (e)
+            { }
+        }
+
+        function closeClaen() {
+            select = document.getElementById("layerResource");
+
+            for (var i = 0; i < datas.length; i++) {
+                closeClaen1(datas[i],names[i]);
+            }
+            //try {
+            //    var theMeshFeatureLayer = sgworld.ProjectTree.GetObject(sgworld.ProjectTree.FindItem("模型\\13号建筑"));
+            //    var _3dml = null;
+            //    for (var j = 0; j < theMeshFeatureLayer.FeatureLayers.Count; j++) {
+            //        var value = theMeshFeatureLayer.FeatureLayers.Item(j).TreeItem.Name;
+            //        var name = value.substring(value.indexOf('#') + 1, value.indexOf('-'));
+            //        var select = document.getElementById("layerResource");
+            //        select.options.add(new Option(name, value));
+            //    }
+               
+            //    var theMeshFeatureLayer = sgworld.ProjectTree.GetObject(sgworld.ProjectTree.FindItem("模型\\13号建筑"));
+            //    sgworld.ProjectTree.SetVisibility(theMeshFeatureLayer.ID, true);
+               
+            //} catch (e)
+            //{ }
+        }
+
+        function setLayerVisibility(modeDir, bBool) {
+            var theMeshFeatureLayer = sgworld.ProjectTree.GetObject(sgworld.ProjectTree.FindItem(modeDir));
+
+            for (var j = 0; j < theMeshFeatureLayer.FeatureLayers.Count; j++) {
+                sgworld.ProjectTree.SetVisibility(theMeshFeatureLayer.FeatureLayers.Item(j).ID, true);
+            }
+        }
+
+        function selectLayer(value)
+        {
+            document.getElementById("NameQuery").value = "";
+            document.getElementById("QueryContent").innerHTML = "";
+            if (value == "-1") {
+                //var theMeshFeatureLayer = sgworld.ProjectTree.GetObject(sgworld.ProjectTree.FindItem("模型\\13号建筑"));
+                //var theMeshFeatureLayer = sgworld.ProjectTree.GetObject(sgworld.ProjectTree.FindItem("模型\\13号建筑\\13#建筑剪力墙-三维视图-{三维}"));
+                //sgworld.ProjectTree.SetVisibility(theMeshFeatureLayer.ID, true);
+                for (var i = 0; i < datas.length; i++) {
+                    setLayerVisibility(datas[i],true);
+                }
+
+                var DIVSearch = document.getElementById("search");
+                DIVSearch.style.visibility = "hidden";
+
+            }
+            else {
+                var DIVSearch = document.getElementById("search");
+                DIVSearch.style.visibility = "visible";
+              
+                for (var i = 0; i < datas.length; i++) {
+                    setLayerVisibility(datas[i], false);
+                }
+
+
+                setLayerVisibility(value, true);
+
+                selectValue = value;
+                //var theMeshFeatureLayer = sgworld.ProjectTree.GetObject(sgworld.ProjectTree.FindItem("模型\\13号建筑"));
+                //sgworld.ProjectTree.SetVisibility(theMeshFeatureLayer.ID, false);
+                //for (var j = 0; j < theMeshFeatureLayer.FeatureLayers.Count; j++) {
+                //    var name = theMeshFeatureLayer.FeatureLayers.Item(j).TreeItem.Name;
+                //    if (name == selectValue) {
+                //        sgworld.ProjectTree.SetVisibility(theMeshFeatureLayer.FeatureLayers.Item(j).ID, true);
+                //    }
+
+                //}
+            }
+        }
+
+    </script>
+</head>
+<body onload="closeClaen()">
+    <div>
+        <div>
+            图层：<select id="layerResource" style=" width:100px" onchange="selectLayer(this.options[this.options.selectedIndex].value)">
+                <option value="-1">请选择</option>
+            </select>
+        </div>
+        <br />
+        <div id="search" style="visibility:hidden">
+
+            <input id="NameQuery" type="text" /><a href="#" style=" margin-left:5px; color:Blue; font-size:14px; text-decoration:none;" onclick="dqNameQuery();">查询</a>
+            <br />
+            
+        </div>
+      
+    </div>
+    <br />
+    <div id="QueryContent">
+
+    </div>
+   
+    <object id="sgworld" classid="CLSID:3a4f9199-65a8-11d5-85c1-0001023952c1"></object>
+  
+</body>
+</html>

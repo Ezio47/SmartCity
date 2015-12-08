@@ -1,0 +1,77 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <link href="../css/pageStyle.css" rel="stylesheet" type="text/css" />
+    <script src="../js/event.js" type="text/javascript"></script>
+    <script src="../js/tools.js" type="text/javascript"></script>
+    <script src="../js/jquery-1.10.2.js" type="text/javascript"></script>
+    <script src="../js/clickCheck.js" type="text/javascript"></script>
+    <script src="../js/flow.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var showGroupId = new Array();
+        var layerPosition = "kit-1204okfi\\shiyou2-1layer\\";
+        var allPosition = "浏览\\";
+
+        function shrink(ulid) {
+            var myul = document.getElementById(ulid);
+            if (myul.style.display == "none") {
+                myul.style.display = "block";
+            }
+            else {
+                myul.style.display = "none";
+            }
+        }
+        function closeClaen() {
+            try {
+                allClean();
+                AllInitialise();
+            } catch (e)
+            { }
+        }
+    </script>
+</head>
+<body onunload="closeClaen()" >
+    <div id="browseDiv" style="display: inline; width: 244px;">
+        <!--        <div style="margin-top: 1px; text-align: right; width: 231px; height: 39px; background-image: url('../images/1.png');">
+            <table style="width: 100%;">
+                <tr>
+                    <td><a style="font-size: large; font-family: '幼圆'; color: white;">地上浏览</a></td>
+                    <td style="width: 80px;"></td>
+                    <td>
+                        <img src="../images/close.png" style="margin: 5px 10px 0 0; height: 28px;" onclick="removePopupByName('菜单');" onmousemove="this.src = '../images/close_on.png'" onmouseout="this.src = '../images/close.png'" />
+                    </td>
+                </tr>
+            </table>
+        </div>-->
+        <div id="browseC" style="padding-left: 5px; padding-top: 5px; overflow: auto;">
+            
+            <div onclick="shrink('locationul');" style="margin-top: 1px; line-height: 30px; width: 330px; height: 30px; background-color: #72AEEB;">
+                <a style="font-size: medium; font-family: '幼圆'; color: white; margin-left: 12px;font-weight:bold;">定位点</a>
+            </div>
+            <ul id="locationul" class="leftMenu">
+                <li><a href="#" onclick="myflyto(allPosition + '13浏览\\13整体1');">总体浏览</a></li>
+                <li><a href="#" onclick="myflyto(allPosition + '13浏览\\13整体2');">楼顶浏览</a></li>
+
+            </ul>
+            <div onclick="shrink('overgroundul');" style="margin-top: 1px; line-height: 30px; width: 330px; height: 30px; background-color: #72AEEB;">
+                <a style="font-size:medium; font-family: '幼圆'; color: white; margin-left: 12px; font-weight:bold;">地上浏览</a>
+            </div>
+            <ul id="overgroundul" class="leftMenu">
+                <li><a href="#" onclick="PresentationPlay(allPosition + '13浏览\\13室内浏览');">室外浏览</a></li>
+
+            </ul>
+            <br />
+           
+           
+            <!--<a href="#" style="margin-left: 20px;" onclick="selectVisual(11);">【第一人称】</a>
+            <a href="#" onclick="selectVisual(10);">【第三人称】</a>-->
+
+        </div>
+    </div>
+ 
+    <object id="sgworld" classid="CLSID:3a4f9197-65a8-11d5-85c1-0001023952c1"></object>
+   
+</body>
+</html>

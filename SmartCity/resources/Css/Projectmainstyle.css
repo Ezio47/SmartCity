@@ -1,0 +1,343 @@
+﻿/*项目主页面样式*/
+ .mainleftdivprjtop
+ {
+     position:absolute;
+    /* */left:0;
+     right:0;
+     top:0;
+     height:12px;
+     
+     background-image:url('/resources/images/primg/mainlefttop.PNG');
+     }    
+  .mainleftdivprjcenter
+ {
+     position:absolute;
+     left:0;
+     right:0;
+     top:12px;
+     bottom:12px;
+     background-image:url('/resources/images/primg/mainleftcenter.PNG');
+     } 
+.mainleftdivprjbottom
+ {
+     position:absolute;
+     left:0;
+     right:0;
+     height:12px;
+     bottom:0px;
+     background-image:url('/resources/images/primg/mainleftbottom.PNG');
+     } 
+ .mainrightdivprjtop
+ {
+     position:absolute;
+    /* */left:0;
+     right:0;
+     top:0;
+     height:12px;
+     
+     background-image:url('/resources/images/primg/mainrighttop.PNG');
+     }    
+  .mainrightdivprjcenter
+ {
+     position:absolute;
+     left:0;
+     right:0;
+     top:12px;
+     bottom:12px;
+     background-image:url('/resources/images/primg/mainrightcenter.PNG');
+     } 
+.mainrightdivprjbottom
+ {
+     position:absolute;
+     left:0;
+     right:0;
+     height:12px;
+     bottom:0px;
+     background-image:url('/resources/images/primg/mainrightbottom.PNG');
+     } 
+ /*内框样式*/
+ .mainleftdivinnertop
+ {
+     position:absolute;
+    /* */left:0;
+     right:0;
+     top:0;
+     height:12px;
+     
+     background-image:url('/resources/images/primg/mainriinnertop.PNG');
+     }    
+  .mainleftdivinnercenter
+ {
+     position:absolute;
+     left:0;
+     right:0;
+     top:12px;
+     bottom:12px;
+     background-image:url('/resources/images/primg/mainriinnercenter.PNG');
+     } 
+.mainleftdivinnerbottom
+ {
+     position:absolute;
+     left:0;
+     right:0;
+     height:12px;
+     bottom:0px;
+     background-image:url('/resources/images/primg/mainriinnerbottom.PNG');
+     } 
+ .mainrightdivinnertop
+ {
+     position:absolute;
+    /* */left:0;
+     right:0;
+     top:0;
+     height:7px;
+     background-image:url('/resources/images/primg/mainleinnertop.PNG');
+     }    
+  .mainrightdivinnercenter
+ {
+     position:absolute;
+     left:0;
+     right:0;
+     top:7px;
+     bottom:7px;
+     background-image:url('/resources/images/primg/mainleinnercenter.PNG');
+     } 
+.mainrightdivinnerbottom
+ {
+     position:absolute;
+     left:0;
+     right:0;
+     height:7px;
+     bottom:0px;
+     background-image:url('/resources/images/primg/mainleinnerbottom.PNG');
+     } 
+/*蓝色按钮样式*/
+  .bluestylebg
+{
+    height:40px;
+    font-family:'Microsoft YaHei';
+    font-size:11px;
+    font-weight:normal;
+    background: #222 url(overlay.png) repeat-x;
+	display: inline-block;
+	/*padding: 5px 10px 6px;*/
+	padding-left:5px;
+	padding-right:5px;
+	margin-right:5px;
+	margin-bottom:5px;
+	color: #fff;
+	text-decoration: none;
+	-moz-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+	-webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+	text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+	border-bottom: 1px solid rgba(0,0,0,0.25);
+	position: relative;
+	cursor: pointer;
+	background-color: #3A7EBD;
+	letter-spacing:1px;
+	white-space:normal;
+	width:170px;
+	
+    }
+ .bluestylebg:hover
+ {
+      background-color: #2F8FE6;
+     }
+  .redstylebg
+{
+    height:40px;
+    font-family:'Microsoft YaHei';
+    font-size:11px;
+    font-weight:normal;
+    background: #222 url(overlay.png) repeat-x;
+	display: inline-block;
+	/*padding: 5px 10px 6px;*/
+	padding-left:5px;
+	padding-right:5px;
+	margin-right:5px;
+	margin-bottom:5px;
+	color: #fff;
+	text-decoration: none;
+	-moz-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+	-webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+	text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+	border-bottom: 1px solid rgba(0,0,0,0.25);
+	position: relative;
+	cursor: pointer;
+	background-color: #CA4813;
+	letter-spacing:1px;
+	white-space:normal;
+	width:170px;
+	
+    }
+ .redstylebg:hover
+ {
+      background-color: #E44C0E;
+     }
+ .orangestylebg
+{
+    height:40px;
+    font-family:'Microsoft YaHei';
+    font-size:11px;
+    font-weight:normal;
+    background: #222 url(overlay.png) repeat-x;
+	display: inline-block;
+	/*padding: 5px 10px 6px;*/
+	padding-left:5px;
+	padding-right:5px;
+	margin-right:5px;
+	margin-bottom:5px;
+	color: #fff;
+	text-decoration: none;
+	-moz-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+	-webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+	text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+	border-bottom: 1px solid rgba(0,0,0,0.25);
+	position: relative;
+	cursor: pointer;
+	background-color: #F7A35B;
+	letter-spacing:1px;
+	white-space:normal;
+	width:170px;
+	
+    }
+ .orangestylebg:hover
+ {
+      background-color: #DC751B;
+     }
+  .greenstylebg
+{
+    height:40px;
+    font-family:'Microsoft YaHei';
+    font-size:11px;
+    font-weight:normal;
+    background: #222 url(overlay.png) repeat-x;
+	display: inline-block;
+	/*padding: 5px 10px 6px;*/
+	padding-left:5px;
+	padding-right:5px;
+	margin-right:5px;
+	margin-bottom:5px;
+	color: #fff;
+	text-decoration: none;
+	-moz-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+	-webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+	text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+	border-bottom: 1px solid rgba(0,0,0,0.25);
+	position: relative;
+	cursor: pointer;
+	background-color: #7BAF37;
+	letter-spacing:1px;
+	white-space:normal;
+	width:170px;
+	
+    }
+ .greenstylebg:hover
+ {
+      background-color: #67952A;
+     }
+ /* 中发展集团,医疗器械园边框样式 */
+  .zfzmainprjtop
+ {
+     position:absolute;
+    /* */left:0;
+     right:0;
+     top:0;
+     height:17px;
+     background-image:url('/resources/images/primg/zfztop.PNG');
+     }    
+  .zfzmainprjcenter
+ {
+     position:absolute;
+     left:0;
+     right:0;
+     top:17px;
+     bottom:17px;
+     background-image:url('/resources/images/primg/zfzcenter.PNG');
+     } 
+.zfzmainprjbottom
+ {
+     position:absolute;
+     left:0;
+     right:0;
+     bottom:0px;
+     height:17px;
+     background-image:url('/resources/images/primg/zfzbottom.PNG');
+     } 
+ /* 内边框*/
+  .zfzinnermainprjtop
+ {
+     position:absolute;
+    /* */left:0;
+     right:0;
+     top:0;
+     height:6px;
+     background-image:url('/resources/images/primg/zfzinnertop.PNG');
+     }    
+  .zfzinnermainprjcenter
+ {
+     position:absolute;
+     left:0;
+     right:0;
+     top:6px;
+     bottom:15px;
+     background-image:url('/resources/images/primg/zfzinnercenter.PNG');
+     } 
+.zfzinnermainprjbottom
+ {
+     position:absolute;
+     left:0;
+     right:0;
+     bottom:0px;
+     height:15px;
+     background-image:url('/resources/images/primg/zfzinnerbottom.PNG');
+     } 
+ /*中发展图片样式*/
+ .img_zfzYxy
+ {
+     position:absolute; top:0px; left:0px;width:1228px;
+     }
+     
+ .divfont
+ {
+     
+     font-size:13px; 
+     color:#3A7EBD; 
+     font-weight:bold; 
+     word-spacing:2px; 
+     letter-spacing:2px; 
+     font-family:'Microsoft YaHei';
+     line-height:1.5;
+     text-indent:2em;
+     }
+ #img_mappng
+ {
+     position:absolute; top:0px; left:0px;width:832px;
+     }
+     
+ .leftArrowImglist
+ {
+     background-image:url(/resources/layer/skin/default/icon-ext.png);
+     background-position:-3px -3px;
+     width:30px;
+     height:46px;
+      margin-top:50px;
+      margin-left:20px;
+      border-width:0px;
+     }
+  .leftArrowImglist:hover
+  {
+      background-position:-31px -3px;
+      }
+ .rightArrowImglist
+ {
+     background-image:url(/resources/layer/skin/default/icon-ext.png) ;
+     background-position:-5px 50px;
+     width:28px;
+     height:46px;
+     margin-top:50px;
+     }
+ .rightArrowImglist:hover
+ {
+      background-position:-33px 50px;
+     }

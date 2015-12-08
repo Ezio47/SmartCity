@@ -1,0 +1,76 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>下载视频摄像</title>
+    <style>
+        .box {
+            height: 100%;
+            width: 100%;
+            margin: auto;
+            font-family: Cursive;
+            line-height:1.3em;
+            font-size: 0.9em;
+        }
+        
+         #camAddress {
+             width: 400px;
+         }
+    </style>
+</head>
+<script type="text/javascript">
+    function downLoadClient() {
+       
+       var subUrl = getHostUrl() + '/网络视频监控播放客户端15.9.2.zip';
+        window.open(subUrl);
+    }
+
+    function downLoadProtocolClient()
+    {
+        var subUrl = getHostUrl() + '/视频客户端调用协议注册程序.exe';
+        window.open(subUrl);
+    }
+
+    function getHostUrl() {
+        var url = window.location.href;
+        var end = url.lastIndexOf('/');
+        var hostUrl = url.substring(0, end);
+        return hostUrl;
+    }
+
+    function openCam() {
+        var url = document.getElementById("camAddress").value;
+        if (url.indexOf('VideoPlayClient.exe') === -1) {
+            url = url + '/VideoPlayClient.exe';
+        }
+        window.open(url);
+
+    }
+</script>
+<body>
+<div class="box">
+    <div>
+        <label>如果未安装网络视频监控客户端,请点击下载</label>
+    </div>
+    <div>
+        <a href="#" onclick="downLoadClient();">网络视频监控播放客户端15.9.2.zip</a>
+    </div>
+      <div>
+        <label>如果未安装视频客户端调用协议注册程序,请点击下载</label>
+    </div>
+    <div>
+        <a href="#" onclick="downLoadProtocolClient();">视频客户端调用协议注册程序.exe</a>
+    </div>
+<!--    <div>
+        <label for="camAddress">请输入安装程序路径:</label><br/>
+        <input id="camAddress"/>
+        <button name="camClient" onclick="openCam()">运行视频客户端</button>
+    </div>-->
+    <div>操作流程:下载安装完成后,运行视频客户端调用协议注册程序,将网络视频监控播放客户端-VideoPlayClient.exe的安装路径输入，进行注册，再次点击查看摄像即可调用客户端程序进行视频查看或直接运行客户端查看摄像！</div>
+    <div align="center">
+        <a href="downloadCam.html" target="_blank">查看详情</a>
+    </div>
+   
+</div>
+</body>
+</html>

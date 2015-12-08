@@ -1,0 +1,141 @@
+﻿a:link, a:visited {
+            font-size: 12px;
+        }
+
+        a:active {
+            font-size: 18px;
+        }
+        .floatLeft {
+            position: relative;
+            float: left;
+        }
+        .floatRight {
+            position: relative;
+            float: right;
+        }
+        label {
+            margin: 5px 0px 5px 5px;
+            padding: 5px;
+        }
+        #main{
+            width: 90%;
+            height: 90%;
+            margin: auto;
+        }
+        #top{
+            width: 100%;
+            border: 1px solid white;
+            border-bottom: 1px solid #000000;
+             border-radius:10px;
+            background-color: white;
+       
+        }
+          .header
+          {
+              position: relative;
+              height: 35px;
+              font-size: 30px;
+              text-align: center;
+              color: #000000;
+              font-weight: bold;
+         
+          }
+          .header label {
+              margin-bottom: 2px;
+          }
+          .container
+          {
+              position: relative;
+              height: 180px;
+              margin: 20px;
+              padding: 5px;
+              font-size: 14px;
+              font-family: "微软雅黑";
+              border: 1px solid #c0c0c0;
+              border-bottom:  2px solid #c0c0c0;
+          }
+
+        .lineSpan {
+            height: 40px;
+            margin: 5px 0px 5px 5px;
+            padding: 2px;
+        }
+        .lineBox1 {
+            margin: 5px 5px 20px 20px ;
+            padding: 5px;
+            text-align: center;
+             border: 1px solid #c0c0c0;
+              border-bottom:  2px solid #c0c0c0;
+               min-height:500px;
+        }
+        .lineBox2 {
+             margin: 5px  20px 20px 5px;
+            padding: 5px;
+            text-align: center;
+             border: 1px solid #c0c0c0;
+              border-bottom:  2px solid #c0c0c0;
+              min-height:500px;
+        }
+        #show label {
+            font-weight: bold;
+        }
+          select
+          {
+              width: 80px;
+              height: 25px;
+              border: 1px solid #000000;
+              border-radius: 1px;
+              cursor: default;
+          }
+          #dateBar button
+          {
+              width: 80px;
+              height: 25px;
+              margin: 0px;
+              padding: 2px;
+              border: 0.5px solid #000000;
+              border-bottom: 1px solid #000000;
+              border-top: 1px solid #000000;
+          }
+        .dateUnselected {
+            background: white;    
+        }
+        .dateSelected {
+            background: #D97E00;
+        }
+        .mainContent {
+            margin-top: 5px;
+            position: relative;
+            cursor: pointer;
+            width: 100%;
+            background-color: white;
+            border-radius: 10px;
+        }
+
+        .fillTable {
+            height: 100%;
+            width: 100%;
+        }
+
+        .ui-progressbar {
+            position: relative;
+            float: left;
+           height: 25px;
+            width:800px;
+        }
+          .ui-widget-header
+          {
+              background: #3B7EBD;
+          }
+          .ui-widget-content
+          {
+              border: 1px solid #000000;
+              color: #000000;
+          }
+        .progress-label {
+            position: absolute;
+            float: left;
+            left: 50%;
+            font-weight: bold;
+            text-shadow: 1px 1px 0 #fff;
+        }

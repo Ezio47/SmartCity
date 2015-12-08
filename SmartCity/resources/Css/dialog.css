@@ -1,0 +1,46 @@
+﻿@charset "utf-8";
+/* CSS Document */
+
+/*-----  @弹出框们 ------*/
+.box_dialog a.close,
+.btn_yes,.btn_no,
+.box_dialog .ico_info,.box_sugg .ico_info,
+.box_dialog .ico_aler,.box_sugg .ico_aler,
+.box_dialog .ico_ques,.box_sugg .ico_ques,
+.box_dialog .ico_erro,.box_sugg .ico_erro,
+.box_dialog .ico_corr,.box_sugg .ico_corr{ background:url(../images/pop_bg.png) no-repeat; display:inline-block; vertical-align:middle; overflow:hidden; }
+.box_dashed{ border:3px dashed #888; cursor:move; position:absolute; z-index:1001;}
+.box_dashed .in_dashed{background:#fff; filter:alpha(opacity=50); opacity:0.5; width:100%; height:100%; }
+.box_dialog{ border:5px solid #8bd3fb; position:absolute; left:0; top:0; z-index:999; width:350px; background:#fff; box-shadow:0px 0px 15px rgba(0,0,0,0.4); display:none; overflow:hidden; }
+.box_dialog .dialog_title{ height:30px; line-height:30px; position:relative; background:#8bd3fb; border-bottom:1px solid #bbb; cursor:move; font-size:14px; font-weight:bold; padding:0 0 0 10px; color:#777576; margin-top:0px;}
+.box_dialog a.close{ height:24px; width:24px; background-position: -158px 0; display:block; position:absolute; top:3px; right:3px; text-indent:-1000px; }
+.box_dialog a.close:hover{ background-position:-158px -24px;  }
+.box_dialog .dialog_content { min-height:40px; _height:40px; padding:10px 20px; line-height:20px; font-size:12px; color:#404040;}
+.box_dialog .dialog_content .dialog_txt{ font-size:14px; font-weight:bold; line-height:25px; }
+.box_dialog .dialog_bottom{ padding:5px 0 15px; text-align:center; width:100%; }
+.box_dialog .dialog_iframe{ border:none; }
+.btn_yes,.btn_no { text-decoration:none; text-align:center; width:79px; 
+height:29px; 
+line-height:29px; font-size:14px; font-weight:bold; color:#fff; }
+.btn_yes:hover{ background-position:0 -30px; text-decoration:none; color:#fff; }
+.btn_no{ background-position:-79px 0; color:#666; margin-left:25px; }
+.btn_no:hover{ background-position:-79px -30px; text-decoration:none; color:#444; }
+.box_dialog .ico_info,.box_sugg .ico_info{ background-position:0 -60px; width:25px; height:25px; margin-right:10px;}
+.box_dialog .ico_aler,.box_sugg .ico_aler{ background-position:-25px -60px; width:25px; height:25px; margin-right:10px; }
+.box_dialog .ico_ques,.box_sugg .ico_ques{ background-position:-50px -60px; width:25px; height:25px; margin-right:10px; }
+.box_dialog .ico_erro,.box_sugg .ico_erro{ background-position:-75px -60px; width:25px; height:25px; margin-right:10px; }
+.box_dialog .ico_corr,.box_sugg .ico_corr{ background-position:-100px -60px; width:25px; height:25px; margin-right:10px; }
+.box_sugg .ico_load{ background: url(../images/loading_dialog.gif) no-repeat; width:25px; height:25px; display:inline-block; vertical-align:middle; overflow:hidden; margin-right:10px; }
+.box_sugg{ height:59px; _height:51px; z-index:1001; display:none; position:fixed; _position:absolute; left:0; top:0; }
+.box_sugg .sugg_left{ background: url(../images/pop_bg0.png) no-repeat 0 0; _background: url(../images/pop_bg.png) no-repeat 0 -92px; float:left; width:10px; height:59px; _height:51px; }
+.box_sugg .sugg_con{ background: url(../images/pop_bg0.png) repeat-x 0 -59px; _background: url(../images/pop_bg.png) repeat-x 0 -143px; float:left; height:25px; padding:17px 5px; _padding:13px 5px;}
+.box_sugg .sugg_in_con{ font-size:14px; color:#444; font-weight:bold; line-height:25px; height:25px; }
+.box_sugg .sugg_right{ background: url(../images/pop_bg0.png) no-repeat -18px 0; _background: url(../images/pop_bg.png) no-repeat -10px -92px; float:left; width:10px; height:59px; _height:51px; }
+
+
+/*提示CSS*/
+.cancel,.cancel span { display:inline-block; vertical-align:top; background:url(../images/cancel-bg.png) no-repeat; height:30px;}
+.cancel { padding:0 0 0 15px; background-position:0 0;text-decoration:none;}
+.cancel span { padding:0 15px 0 0;background-position:right 0; color:#666; font-weight:bold; font-size:14px; line-height:30px; text-align:center;}
+.cancel:hover { background-position:0 -30px;text-decoration:none;}
+.cancel:hover span { background-position:right -30px;}

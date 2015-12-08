@@ -1,0 +1,168 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>二三维联动</title>
+    <link rel="stylesheet" type="text/css" href="http://localhost/arcgis_js_api/library/3.2/jsapi/js/dojo/dijit/themes/tundra/tundra.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost/arcgis_js_api/library/3.2/jsapi/js/esri/css/esri.css" />
+            <script type="text/javascript">
+                var dojoConfig = {
+                    parseOnLoad: true
+                };
+    </script>
+    <script type="text/javascript" src="http://localhost/arcgis_js_api/library/3.2/jsapi/init.js"></script>
+    <script type="text/javascript">
+        //dojo.require("esri.map");
+        //dojo.require("dijit.layout.ContentPane");
+        //dojo.require("dijit.layout.BorderContainer");
+        //dojo.require("esri.toolbars.edit");
+        var map = null;
+        var lastlevel = -1;
+        var creatorGraphic;
+        var handler;
+        var countyLayer = null;
+        function init() {
+            try {
+                map = new esri.Map("map");
+                countyLayer = new esri.layers.GraphicsLayer();
+               // var layer = new esri.layers.ArcGISTiledMapServiceLayer("http://localhost/ArcGIS/rest/services/sz/MapServer");
+		        var layer = new esri.layers.ArcGISTiledMapServiceLayer("http://localhost/ArcGIS/rest/services/szEmap_geo2/MapServer");
+                map.addLayer(layer);
+		        map.addLayer(countyLayer);
+                dojo.connect(map, "onExtentChange", myEventTester);
+            } catch (e) {
+                alert("二维地图加载失败！");
+            }
+
+
+          //  var tdobj = window.parent;
+            var symbol = new esri.symbol.PictureMarkerSymbol('images/66.png', 25, 25);
+            var point = new esri.geometry.Point(114.057009, 22.55841, new esri.SpatialReference({ wkid: 4326 }));
+            var graphic = new esri.Graphic(point, symbol);
+            creatorGraphic = graphic;
+            countyLayer.add(graphic)
+          //  tdobj.creatorPoint(evt.mapPoint.x, evt.mapPoint.y);
+          //  var geoPt = evt.mapPoint;
+            map.setMapCursor('default');
+            //dojo.disconnect(handler);
+        }
+        
+        function myEventTester(e) {
+            try {
+                var tdobj = window.parent;
+                if (tdobj.GetComKey() < 0) {  //三维判断鼠标位置             
+                    var cenx = (e.xmin + e.xmax) / 2;
+                    var ceny = (e.ymin + e.ymax) / 2;
+                    var level = map.getLevel();
+                    mh = 21111111 / (1 << level + 4);
+
+                    tdobj.setcenter(cenx, ceny, mh);  //三维定位
+                    }
+            }
+            catch (e) {
+                
+            }
+        }
+
+        function setcenter(x,y,h) {
+            map.centerAt(new esri.geometry.Point(x, y));
+            var h = h;
+            if (h < 1) h = 1;
+            level = Math.floor(Math.log(h) / Math.log(2.0) - 5);
+            if (level < 1) level = 1;
+            if (level > 15) level = 15;
+            if (level != lastlevel) {
+                lastlevel = level;
+                map.setLevel(15 - level);
+            }
+        }
+
+
+        function clickAddPoint() {
+            editToolbar = new esri.toolbars.Edit(map);
+            editToolbar.deactivate();
+            map.setMapCursor('crosshair');
+            handler = dojo.connect(map, "onClick", addPoint);
+
+        }
+        function addPoint(evt) {
+            try {
+                  var tdobj = window.parent;
+                var symbol = new esri.symbol.PictureMarkerSymbol('images/66.png', 25, 25);
+                var point = new esri.geometry.Point(evt.mapPoint, new esri.SpatialReference({ wkid: 4326 }));
+                var graphic = new esri.Graphic(point, symbol);
+                creatorGraphic = graphic;
+                countyLayer.add(graphic)
+                tdobj.creatorPoint(evt.mapPoint.x, evt.mapPoint.y);
+                var geoPt = evt.mapPoint;
+                map.setMapCursor('default');
+                dojo.disconnect(handler);
+            } catch (e) {
+                alert("添加出错：" + e.message);
+            }
+        }
+        function clickEditPoint() {
+            try {
+                editToolbar = new esri.toolbars.Edit(map);
+                editToolbar.deactivate();
+                var tool = 0;
+                tool = tool | esri.toolbars.Edit.MOVE;
+                //tool = tool | esri.toolbars.Edit.EDIT_VERTICES;  
+                //tool = tool | esri.toolbars.Edit.SCALE;  
+                //tool = tool | esri.toolbars.Edit.ROTATE;  
+
+                var options = {
+                    allowAddVertices: true,
+                    allowDeleteVertices: true
+                };
+                var tdobj = window.parent;
+                //                dojo.connect(editToolbar, "onGraphicMove", function (graphic, transform) {
+                //                    tdobj.cImagelabelMove(graphic.geometry.x, graphic.geometry.y);
+                //                });
+                dojo.connect(editToolbar, "onGraphicMoveStop", function (graphic, transform) {
+                    tdobj.cImagelabelMove(graphic.geometry.x, graphic.geometry.y);
+                });
+                editToolbar.activate(tool, creatorGraphic, options);
+            } catch (e) {
+                alert("移动要素问题：" + e.message);
+            }
+
+        }
+        function showInfoWindow(evt) {
+            evt.stopPropagation();
+            map.infoWindow.setTitle("新标注");
+            var geoPt = evt.mapPoint;
+
+        }
+        //        function editPoint(evt) {
+        //            try {
+        //                var symbol = new esri.symbol.PictureMarkerSymbol('images/66.png', 25, 25);
+        //                var point = new esri.geometry.Point(evt.mapPoint, new esri.SpatialReference({ wkid: 4326 }));
+        //                var graphic = new esri.Graphic(point, symbol);
+        //                map.graphics.add(graphic);
+        //                var geoPt = evt.mapPoint;
+        //                map.setMapCursor('default');
+        //                //dojo.disconnect(handler);
+
+        //            } catch (e) {
+        //                alert("添加标注出错：" + e.message);
+        //            }ss
+        //        }onload="init();" 
+        function moveGraphic(x, y) {
+            creatorGraphic.geometry.x = x;
+            creatorGraphic.geometry.y = y;
+        }
+        function Clean() {
+            try {
+                dojo.disconnect(handler);
+            } catch (e)
+            { }
+        }
+
+    </script>
+</head>
+<body style=" margin:0px; padding:0px;">
+    <div style="width: 491px; height: 500px;" id="map">
+    </div>
+</body>
+</html>

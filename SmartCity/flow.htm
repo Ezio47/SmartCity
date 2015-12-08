@@ -1,0 +1,550 @@
+﻿<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+  
+</head>
+<body>
+<div>
+
+<table>
+<tr>
+<td>名称：</td>
+  <td> <input id="Naming" type="text" value="test" /></td>
+</tr>
+<tr>
+<td>高度：</td>
+  <td> <input id="Height" type="text" value="10" /></td>
+</tr>
+<tr>
+<td>半径：</td>
+  <td> <input id="Radius" type="text" value="5" /></td>
+</tr>
+<tr>
+<td>流速（毫秒/米）：</td>
+  <td> <input id="Speed" type="text" value="100" /></td>
+</tr>
+<tr><td>
+    <input id="Button1" type="button" value="绘制管线" onclick="draw()" />
+    </td>
+    <td>绘制完成直接可以看到流动效果</td>
+</tr> 
+<tr><td>
+    <input id="Button2" type="button" value="流动" onclick="lineFlow()" />
+    </td><td>
+    选择一条没有建立模型的线点击可以看到效果
+    </td>
+</tr> 
+</table>
+</div>
+    <object id="sgworld" classid="CLSID:3a4f9197-65a8-11d5-85c1-0001023952c1">
+    </object>
+      <script type="text/javascript">
+          var bInEdit = false;
+          var gPolyObj = null;
+          var greenSphereModel = "C:\\sy\\model\\green\\qiu-green.xpl2";
+          var redSphereModel = "C:\\sy\\model\\blue\\qiu-blue-.xpl2";
+          var greenPipeModel = "C:\\sy\\model\\green\\yuanzhu-green.xpl2";
+          var redPipeModel = "C:\\sy\\model\\blue\\yuanzhu-blue.xpl2";
+          var r = 0.0;
+          var h = 0.0;
+	  var s = 0.0;
+          var name = "";
+          var groupId;
+          var PipeModel = null;
+          var SegmentLength = 0;
+          function draw() {
+             // sgworld = CreateSGObj();
+              if (sgworld.Project.Name != "") {
+	        	try
+			{
+			LineGeometry=null;
+			flowLine=null;
+        		drawModel = null;
+			joinCount = 0;
+        		count = 0;
+			clearInterval(time);
+			}
+			catch(e)
+			{}	
+                  try {
+
+                      r = parseFloat(document.getElementById("Radius").value);
+                      h = parseFloat(document.getElementById("Height").value);
+		      s = parseFloat(document.getElementById("Speed").value);
+                      name = document.getElementById("Naming").value;
+                  }
+                  catch (e) {
+                      r = 0.0;
+                      h = 0.0;
+		      s = 0.0;
+                      name = "";
+                  }
+                  if ((r * h * s != 0) && name != "") {
+                      if (!bInEdit) {
+                          bInEdit = true;
+                          sgworld.AttachEvent("OnLButtonDown", DrawPolyLButtonDown);
+                          sgworld.AttachEvent("OnRButtonUp", DrawPolyRButtonUp);
+                          sgworld.AttachEvent("OnFrame", DrawPolyOnFrame);
+                          sgworld.Window.SetInputMode(1);
+                      }
+                      else {
+                          Reset();
+                      }
+                  }
+              }
+          }
+          //----------
+          function DrawPolyLButtonDown(Flags, X, Y) {
+              var CursorCoord = sgworld.Window.pixelToWorld(X, Y);
+              if (CursorCoord == null)
+                  return false;
+              if (gPolyObj == null) {
+                  var line = sgworld.ProjectTree.CreateGroup(name, "");
+
+                  var myGeometry = sgworld.Creator.GeometryCreator.CreateLineStringGeometry([CursorCoord.Position.x, CursorCoord.Position.y, 0, CursorCoord.Position.x, CursorCoord.Position.y, 0])
+                  gPolyObj = sgworld.Creator.CreatePolyline(myGeometry, sgworld.Creator.CreateColor(0, 255, 0, 1), 2, line, "test");
+                  gPolyObj.LineStyle.Width = -2;
+                  gPolyObj.Geometry.StartEdit();
+
+              }
+              else {
+                  gPolyObj.Geometry.Points.Item(gPolyObj.Geometry.Points.count - 1).X = CursorCoord.Position.x;
+                  gPolyObj.Geometry.Points.Item(gPolyObj.Geometry.Points.count - 1).Y = CursorCoord.Position.y;
+                  gPolyObj.Geometry.Points.Item(gPolyObj.Geometry.Points.count - 1).Z = 0;
+                  gPolyObj.Geometry.Points.AddPoint(CursorCoord.Position.x, CursorCoord.Position.y, 0);
+              }
+              return true;
+          }
+          //-----------
+          // onFrame
+          //-----------
+          function DrawPolyOnFrame() {
+              if (gPolyObj != null) {
+                  try {
+                      var mouseInfo = sgworld.Window.GetMouseInfo()
+                      var CursorCoord = sgworld.Window.pixelToWorld(mouseInfo.X, mouseInfo.Y);
+                      if (CursorCoord == null)
+                          return false;
+                      gPolyObj.Geometry.Points.Item(gPolyObj.Geometry.Points.count - 1).X = CursorCoord.Position.x;
+                      gPolyObj.Geometry.Points.Item(gPolyObj.Geometry.Points.count - 1).Y = CursorCoord.Position.y;
+                      gPolyObj.Geometry.Points.Item(gPolyObj.Geometry.Points.count - 1).Z = 0;
+                  }
+                  catch (e) { }
+              }
+          }
+
+
+          //-------------
+          // DrawPolyRButtonUp
+          function DrawPolyRButtonUp(Flags, X, Y) {
+              if (gPolyObj == null || gPolyObj.Geometry.Points.count <= 2) {
+                  Reset();
+                  return false;
+              }
+              gPolyObj.Geometry.Points.DeletePoint(gPolyObj.Geometry.Points.count - 1);
+              gPolyObj.Geometry.EndEdit();
+		//alert(gPolyObj.TreeItem.ItemID);
+		//alert(sgworld.ProjectTree.GetItemName(gPolyObj.TreeItem.ItemID));
+	      //sgworld.ProjectTree.SetVisibility(gPolyObj.TreeItem.ItemID, false);
+              groupId = sgworld.ProjectTree.CreateGroup(name, "");
+              CreatorPip(gPolyObj.Geometry, groupId);
+		LineGeometry=gPolyObj.Geometry;
+              timer(gPolyObj.Geometry);
+              //gEndDrawPoly(gPolyObj.Geometry, gPolyObj.ObjectType, gPolyObj.Position.AltitudeType);
+              Reset();
+              return true;
+          }
+
+          function CreatorPip(line, id) {
+              if (line != null) {
+                  for (var i = 1; i < line.Points.Count; i++) {
+                      var currCoord = null;
+                      var nextCoord = null;
+                      var lastCoord = null;
+                      var tempModel = null;
+                      var joinModel = null;
+                      var sphereModel = null;
+                      var radius = r;
+                      var previous = line.Points.Item(i - 1);
+                      var currently = line.Points.Item(i);
+                      if (i == 1) {
+                          currCoord = sgworld.Creator.CreatePosition(previous.X, previous.Y, h, 3);
+                          nextCoord = sgworld.Creator.CreatePosition(currently.X, currently.Y, h, 3);
+                          currCoord = currCoord.AimTo(nextCoord);
+                          currCoord = currCoord.MoveToward(nextCoord, radius);
+                          tempModel = sgworld.Creator.CreateModel(currCoord, greenPipeModel, 1, 0, id, name + i.toString());
+                          tempModel.ScaleX = radius * 1.2;
+                          tempModel.ScaleZ = radius * 1.2;
+                          tempModel.ScaleY = radius * 0.6;
+                          tempModel.Terrain.GroundObject = false;
+                          currCoord = currCoord.MoveToward(nextCoord, -radius);
+                          joinModel = sgworld.Creator.CreateModel(currCoord, greenPipeModel, 1, 0, id, name + i.toString());
+                          joinModel.ScaleX = radius * 1.1;
+                          joinModel.ScaleZ = radius * 1.1;
+                          joinModel.ScaleY = radius;
+                          joinModel.Terrain.GroundObject = false;
+                          sphereModel = sgworld.Creator.CreateModel(currCoord, greenSphereModel, 1, 0, id, name + i.toString());
+                          sphereModel.ScaleX = radius * 1.1;
+                          sphereModel.ScaleZ = radius * 1.1;
+                          sphereModel.ScaleY = radius * 1.1;
+                          sphereModel.Terrain.GroundObject = false;
+
+                      }
+                      if (i == line.Points.Count - 1) {
+                          nextCoord = sgworld.Creator.CreatePosition(previous.X, previous.Y, h, 3);
+                          currCoord = sgworld.Creator.CreatePosition(currently.X, currently.Y, h, 3);
+                          currCoord = currCoord.AimTo(nextCoord);
+                          currCoord = currCoord.MoveToward(nextCoord, radius);
+                          tempModel = sgworld.Creator.CreateModel(currCoord, greenPipeModel, 1, 0, id, name + i.toString());
+                          tempModel.ScaleX = radius * 1.2;
+                          tempModel.ScaleZ = radius * 1.2;
+                          tempModel.ScaleY = radius * 0.4;
+                          tempModel.Terrain.GroundObject = false;
+                          currCoord = currCoord.MoveToward(nextCoord, -radius);
+                          joinModel = sgworld.Creator.CreateModel(currCoord, greenPipeModel, 1, 0, id, name + i.toString());
+                          joinModel.ScaleX = radius * 1.1;
+                          joinModel.ScaleZ = radius * 1.1;
+                          joinModel.ScaleY = radius;
+                          joinModel.Terrain.GroundObject = false;
+                          sphereModel = sgworld.Creator.CreateModel(currCoord, greenSphereModel, 1, 0, id, name + i.toString());
+                          sphereModel.ScaleX = radius * 1.1;
+                          sphereModel.ScaleZ = radius * 1.1;
+                          sphereModel.ScaleY = radius * 1.1;
+                          sphereModel.Terrain.GroundObject = false;
+
+                      }
+                      else {
+                          var lastPoint = line.Points.Item(i + 1);
+                          currCoord = sgworld.Creator.CreatePosition(previous.X, previous.Y, 10, 3);
+                          nextCoord = sgworld.Creator.CreatePosition(currently.X, currently.Y, 10, 3);
+                          lastCoord = sgworld.Creator.CreatePosition(lastPoint.X, lastPoint.Y, 10, 3);
+                          if (currCoord != null && nextCoord != null && lastCoord != null) {
+                              try {
+                                  nextCoord = nextCoord.AimTo(currCoord);
+                                  nextCoord = nextCoord.MoveToward(currCoord, radius);
+                                  tempModel = sgworld.Creator.CreateModel(nextCoord, greenPipeModel, 1, 0, id, name + i.toString());
+                                  tempModel.ScaleX = radius * 1.2;
+                                  tempModel.ScaleZ = radius * 1.2;
+                                  tempModel.ScaleY = radius * 0.6;
+                                  tempModel.Terrain.GroundObject = false;
+
+                                  nextCoord = nextCoord.MoveToward(currCoord, -radius);
+                                  joinModel = sgworld.Creator.CreateModel(nextCoord, greenPipeModel, 1, 0, id, name + i.toString());
+                                  joinModel.ScaleX = radius * 1.1;
+                                  joinModel.ScaleZ = radius * 1.1;
+                                  joinModel.ScaleY = radius;
+                                  joinModel.Terrain.GroundObject = false;
+
+                                  nextCoord = nextCoord.AimTo(lastCoord);
+                                  nextCoord = nextCoord.MoveToward(lastCoord, radius);
+                                  tempModel = sgworld.Creator.CreateModel(nextCoord, greenPipeModel, 1, 0, id, name + i.toString());
+                                  tempModel.ScaleX = radius * 1.2;
+                                  tempModel.ScaleZ = radius * 1.2;
+                                  tempModel.ScaleY = radius * 0.6;
+                                  tempModel.Terrain.GroundObject = false;
+
+                                  nextCoord = nextCoord.MoveToward(lastCoord, -radius);
+                                  joinModel = sgworld.Creator.CreateModel(nextCoord, greenPipeModel, 1, 0, id, name + i.toString());
+                                  joinModel.ScaleX = radius * 1.1;
+                                  joinModel.ScaleZ = radius * 1.1;
+                                  joinModel.ScaleY = radius;
+                                  joinModel.Terrain.GroundObject = false;
+
+                                  sphereModel = sgworld.Creator.CreateModel(nextCoord, greenSphereModel, 1, 0, id, name + i.toString());
+                                  sphereModel.ScaleX = radius * 1.1;
+                                  sphereModel.ScaleZ = radius * 1.1;
+                                  sphereModel.ScaleY = radius * 1.1;
+                                  sphereModel.Terrain.GroundObject = false;
+                              }
+                              catch (e) {
+                                  alert("数据格式出错！");
+                              }
+                          }
+                      }
+                      currCoord = sgworld.Creator.CreatePosition(previous.X, previous.Y, 10, 3);
+                      nextCoord = sgworld.Creator.CreatePosition(currently.X, currently.Y, 10, 3);
+                      currCoord = currCoord.AimTo(nextCoord);
+                      SegmentLength = currCoord.DistanceTo(nextCoord);
+                      PipeModel = sgworld.Creator.CreateModel(currCoord, greenPipeModel, 1, 0, id, name + i.toString());
+                      PipeModel.ScaleX = radius;
+                      PipeModel.ScaleZ = radius;
+                      PipeModel.ScaleY = SegmentLength;
+                      PipeModel.Terrain.GroundObject = false;
+                  }
+              }
+          }
+	var LineGeometry=null;
+	var fId;
+	var flowLine=null;
+	var flowId;
+	var time;
+          function timer() {
+              fId = sgworld.ProjectTree.CreateGroup("流动" + name, "");
+			//alert(fId);
+		if(LineGeometry!=null)
+		{
+		   flowLine=LineGeometry;
+		   flowId=fId;
+                   time = setInterval("CreatorFlowModel()", s);
+		}
+          }
+        var drawModel = null;
+	var joinCount = 0;
+        var count = 0;
+        function CreatorFlowModel() {
+	   try{
+	   if(!bInEdit)
+	   { 
+	     clearInterval(time);
+	   }
+              if (drawModel != null) {
+                  if (drawModel.ScaleY < SegmentLength - 1) {
+                      drawModel.ScaleY += 1;
+                  }
+                  else {
+                      drawModel.ScaleY = SegmentLength;
+                      drawModel = null;
+                  }
+              }
+              else {
+                  var currCoord = null;
+                  var nextCoord = null;
+                  var lastCoord = null;
+                  var previous = null;
+                  var currently = null;
+                  var radius = r;
+                  if (count == 0) {
+                      previous = flowLine.Points.Item(count);
+                      currently = flowLine.Points.Item(count + 1);
+                      currCoord = sgworld.Creator.CreatePosition(previous.X, previous.Y, h, 3);
+                      nextCoord = sgworld.Creator.CreatePosition(currently.X, currently.Y, h, 3);
+                      currCoord = currCoord.AimTo(nextCoord);
+
+                      if (joinCount == 0) {
+                          drawModel = sgworld.Creator.CreateModel(currCoord, redSphereModel, 1, 0, flowId, name);
+                          drawModel.ScaleX = radius * 1.2;
+                          drawModel.ScaleZ = radius * 1.2;
+                          drawModel.ScaleY = radius * 1.2;
+                          drawModel.Terrain.GroundObject = false;
+                          drawModel = null;
+                          joinCount++;
+                      }
+                      else {
+                          if (joinCount == 1) {
+                              SegmentLength = radius;
+                              drawModel = sgworld.Creator.CreateModel(currCoord, redPipeModel, 1, 0, flowId, name);
+                              drawModel.ScaleX = radius * 1.2;
+                              drawModel.ScaleZ = radius * 1.2;
+                              drawModel.ScaleY = 0;
+                              drawModel.Terrain.GroundObject = false;
+                              joinCount++;
+                          }
+                          else {
+                              if (joinCount == 2) {
+                                  SegmentLength = radius * 0.6;
+                                  currCoord = currCoord.MoveToward(nextCoord, radius);
+                                  drawModel = sgworld.Creator.CreateModel(currCoord, redPipeModel, 1, 0, flowId, name);
+                                  drawModel.ScaleX = radius * 1.3;
+                                  drawModel.ScaleZ = radius * 1.3;
+                                  drawModel.ScaleY = 0;
+                                  drawModel.Terrain.GroundObject = false;
+                                  joinCount = 0;
+                                  count++;
+                              }
+                          }
+                      }
+                  }
+                  else {
+                      previous = flowLine.Points.Item(count - 1);
+                      currently = flowLine.Points.Item(count);
+                      currCoord = sgworld.Creator.CreatePosition(previous.X, previous.Y, h, 3);
+                      nextCoord = sgworld.Creator.CreatePosition(currently.X, currently.Y, h, 3);
+                      currCoord = currCoord.AimTo(nextCoord);
+                      if (currCoord != null && nextCoord != null) {
+                          if (joinCount == 0) {
+                              SegmentLength = currCoord.DistanceTo(nextCoord);
+                              if (SegmentLength > (radius * 1.6 * 2)) {
+                                  currCoord = currCoord.MoveToward(nextCoord, (radius * 1.6));
+                                  SegmentLength = SegmentLength - (radius * 1.6 * 2);
+                                  drawModel = sgworld.Creator.CreateModel(currCoord, redPipeModel, 1, 0, flowId, name);
+                                  drawModel.ScaleX = radius * 1.1;
+                                  drawModel.ScaleZ = radius * 1.1;
+                                  drawModel.ScaleY = 0;
+                                  drawModel.Terrain.GroundObject = false;
+                              }
+                              joinCount++;
+
+                          }
+                          else {
+                              if (joinCount == 1) {
+                                  SegmentLength = currCoord.DistanceTo(nextCoord);
+                                  if (SegmentLength < (radius * 1.6)) {
+                                      radius = SegmentLength / 1.6;
+                                  }
+                                  currCoord = currCoord.MoveToward(nextCoord, SegmentLength - (radius * 1.6));
+                                  SegmentLength = radius * 0.6;
+                                  drawModel = sgworld.Creator.CreateModel(currCoord, redPipeModel, 1, 0, flowId, name);
+                                  drawModel.ScaleX = radius * 1.3;
+                                  drawModel.ScaleZ = radius * 1.3;
+                                  drawModel.ScaleY = 0;
+                                  drawModel.Terrain.GroundObject = false;
+                                  joinCount++;
+
+                              }
+                              else {
+                                  if (joinCount == 2) {
+                                      SegmentLength = currCoord.DistanceTo(nextCoord);
+                                      if (SegmentLength < (radius * 1.6)) {
+                                          radius = SegmentLength / 1.6;
+                                      }
+                                      currCoord = currCoord.MoveToward(nextCoord, SegmentLength - radius);
+                                      SegmentLength = radius;
+                                      drawModel = sgworld.Creator.CreateModel(currCoord, redPipeModel, 1, 0, flowId, name);
+                                      drawModel.ScaleX = radius * 1.2;
+                                      drawModel.ScaleZ = radius * 1.2;
+                                      drawModel.ScaleY = 0;
+                                      drawModel.Terrain.GroundObject = false;
+                                      joinCount++;
+                                  }
+                                  else {
+                                      if (joinCount == 3) {
+                                          drawModel = sgworld.Creator.CreateModel(nextCoord, redSphereModel, 1, 0, flowId, name);
+                                          drawModel.ScaleX = radius * 1.2;
+                                          drawModel.ScaleZ = radius * 1.2;
+                                          drawModel.ScaleY = radius * 1.2;
+                                          drawModel.Terrain.GroundObject = false;
+                                          drawModel = null;
+                                          joinCount++;
+                                          if (count == flowLine.Points.Count - 1) {
+                                              joinCount = 0;
+                                              count = 0;
+alert("1");
+						bInEdit=false;
+                                              clearInterval(time);
+                                          }
+                                      }
+                                      else {
+                                          var lastPoint = flowLine.Points.Item(count + 1);
+                                          lastCoord = sgworld.Creator.CreatePosition(lastPoint.X, lastPoint.Y, h, 3);
+                                          nextCoord = nextCoord.AimTo(lastCoord);
+                                          if (lastCoord != null) {
+                                              if (joinCount == 4) {
+                                                  SegmentLength = nextCoord.DistanceTo(lastCoord);
+                                                  if (SegmentLength < (radius * 1.6)) {
+                                                      radius = SegmentLength / 1.6;
+                                                  }
+                                                  SegmentLength = radius;
+                                                  drawModel = sgworld.Creator.CreateModel(nextCoord, redPipeModel, 1, 0, flowId, name);
+                                                  drawModel.ScaleX = radius * 1.2;
+                                                  drawModel.ScaleZ = radius * 1.2;
+                                                  drawModel.ScaleY = 0;
+                                                  drawModel.Terrain.GroundObject = false;
+                                                  joinCount++;
+                                              }
+                                              else {
+                                                  if (joinCount == 5) {
+                                                      SegmentLength = nextCoord.DistanceTo(lastCoord);
+                                                      if (SegmentLength < (radius * 1.6)) {
+                                                          radius = SegmentLength / 1.6;
+                                                      }
+                                                      nextCoord = nextCoord.MoveToward(lastCoord, radius);
+                                                      SegmentLength = radius * 0.6;
+                                                      drawModel = sgworld.Creator.CreateModel(nextCoord, redPipeModel, 1, 0, flowId, name);
+                                                      drawModel.ScaleX = radius * 1.3;
+                                                      drawModel.ScaleZ = radius * 1.3;
+                                                      drawModel.ScaleY = 0;
+                                                      drawModel.Terrain.GroundObject = false;
+                                                      joinCount = 0;
+                                                      count++;
+                                                  }
+                                              }
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  }
+              }
+}
+catch(e)
+{
+bInEdit=false;
+clearInterval(time);
+}
+          }
+          function lineFlow() {
+		//alert(sgworld.Project.Name);
+	        	try
+			{
+			LineGeometry=null;
+			flowLine=null;
+        		drawModel = null;
+			joinCount = 0;
+        		count = 0;
+			clearInterval(time);
+			}
+			catch(e)
+			{}	
+              var ItemId = sgworld.ProjectTree.GetNextItem("",10);
+              var selectLine = sgworld.ProjectTree.GetObject(ItemId);
+              var selectName = sgworld.ProjectTree.GetItemName(ItemId);
+              if (selectName != "") {
+                  var selectGroupId = sgworld.ProjectTree.CreateGroup(selectName);
+              }
+              if (selectLine != null) {
+                  if (selectLine.ObjectType == 1) {
+                  try {
+                      r = parseFloat(document.getElementById("Radius").value);
+                      h = parseFloat(document.getElementById("Height").value);
+		      s = parseFloat(document.getElementById("Speed").value);
+                      document.getElementById("Naming").value=selectName ;
+			name=selectName;
+                  }
+                  catch (e) {
+                      r = 0.0;
+                      h = 0.0;
+		      s = 0.0;
+                      name = "";
+                  }
+		   if(r*h*s!=0)
+		   {
+                      CreatorPip(selectLine.Geometry, selectGroupId);
+			bInEdit=true;
+		      LineGeometry=selectLine.Geometry;
+                      timer();
+		   }
+		   else
+		   {   
+			alert("输入有误！");
+		   }
+                  }
+              }
+          }
+
+
+          function Reset() {
+              try {
+                sgworld.DetachEvent("OnLButtonDown", DrawPolyLButtonDown);
+                sgworld.DetachEvent("OnRButtonUp", DrawPolyRButtonUp);
+                sgworld.DetachEvent("OnFrame", DrawPolyOnFrame);
+                gPolyObj = null;
+              }
+              catch (e) {
+              }
+              sgworld.Window.SetInputMode(0);
+          }
+//          function CreateSGObj() {
+//              var obj = document.getElementById("sgworld");
+//              if (obj == null) {
+//                  obj = document.createElement('object');
+//                  document.body.appendChild(obj);
+//                  obj.name = "sgworld";
+//                  obj.id = "sgworld";
+//                  obj.classid = "CLSID:3a4f9197-65a8-11d5-85c1-0001023952c1";
+//              }
+//              return obj;
+//          }
+    </script>
+</body>
+</html>

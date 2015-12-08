@@ -1,0 +1,18 @@
+﻿.mycover
+{
+    position:absolute;
+    background-color:Gray;
+    opacity:0.5;
+    filter:alpha(opacity=50);
+    display:none;
+}
+.coverholder
+{
+    padding:30px;
+    position:fixed;
+    width:280px;
+    height:180px;
+    background-color:white;
+    z-index:1000;
+    display:none;
+}

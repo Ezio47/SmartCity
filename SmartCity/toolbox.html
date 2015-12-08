@@ -1,0 +1,147 @@
+﻿<html>
+<head>
+    <title></title>
+    <script type="text/javascript">
+        var sgworld;
+        function init() {
+            sgworld = CreateSGObj();
+        }
+        function CreateSGObj() {
+            var obj = $("sgworld");
+            if (obj == null) {
+                obj = document.createElement('object');
+                document.body.appendChild(obj);
+                obj.name = "sgworld";
+                obj.id = "sgworld";
+                obj.classid = "CLSID:3a4f91b1-65a8-11d5-85c1-0001023952c1";
+            }
+            return obj;
+        }
+        function tance() {
+            sgworld.Command.Execute(1034, 0);
+        }
+        function $(id) {
+            return window.document.getElementById(id);
+        }
+        //水平距离
+        function distance() {
+            sgworld.Command.Execute(1034, 0);
+        }
+        //空间距离
+        function distance3D() {
+            sgworld.Command.Execute(1035, 0);
+        }
+        //垂直距离
+        function vertical() {
+            sgworld.Command.Execute(1036, 0);
+        }
+        //面积测量
+        function cover() {
+            sgworld.Command.Execute(1037, 0);
+        }
+        //挖填方分析
+        function volume() {
+            sgworld.Command.Execute(1045,0);
+        }
+        //剖面分析
+        function section() {
+            sgworld.Command.Execute(1043, 0);
+        }
+        //通视分析
+        function intervisibility() {
+            sgworld.Command.Execute(1046, 0);
+        }
+        //视域分析
+        function ken() {
+            sgworld.Command.Execute(1047, 0);
+        }
+        //控高分析
+        function high() {
+            sgworld.AttachEvent("OnLButtonUp", high_OnLButtonUp);
+            sgworld.AttachEvent("OnRButtonUp", high_OnRButtonUp);
+            sgworld.Window.SetInputMode(1);
+        }
+        //危险域分析
+        function danger() {
+            sgworld.Command.Execute(1048, 0);
+        }
+        //等高线分析
+        function isohypse() {
+            sgworld.Command.Execute(1039, 0);
+        }
+        //阴影分析
+        function shadow() {
+            sgworld.Command.Execute(1149, 14);
+        }
+        //淹没分析
+        function submerge() {
+            sgworld.Command.Execute(1044, 0);
+        }
+        //最短路径分析
+        function route() {
+            sgworld.Command.Execute(1042, 0);
+        } 
+                //控高
+        function high_OnLButtonUp(Flags, X, Y) {
+            var CursorCoord = sgworld.Window.PixelToWorld(X, Y);
+            var high = document.getElementById("high").value;
+            var posit = CursorCoord.Position.Copy();
+            posit.Altitude = 0;
+            posit.AltitudeType = 0;
+            sgworld.Creator.CreateBox(posit, 1000, 1000, high, sgworld.Creator.CreateColor(155, 155, 155, 200), sgworld.Creator.CreateColor(155, 155, 155, 200), 0, "temp");
+            //document.getElementById("TerraExplorerInformationWindow").style.display = "none";
+            return true;
+        }
+        function high_OnRButtonUp(Flags, X, Y) {
+            var highBox = 0;
+            for (var i = 0; ; i++) {
+                highBox = sgworld.ProjectTree.FindItem("temp");
+                if (highBox == 0) {
+                    break;
+                }
+                else {
+                    sgworld.ProjectTree.DeleteItem(highBox);
+                    highBox = 0;
+                }
+            }
+            sgworld.DetachEvent("OnLButtonUp", high_OnLButtonUp);
+            sgworld.DetachEvent("OnRButtonUp", high_OnRButtonUp);
+            sgworld.Window.SetInputMode(0);
+            return true;
+        }
+    </script>
+</head>
+<body onload="init();">
+<div>
+<div>
+<h4>空间测量</h4>
+<input type="button" onclick="distance();" value="水平距离"/>
+<input type="button" onclick="vertical();" value="垂直距离"/><br />
+<input type="button" onclick="distance3D();" value="空间距离"/>
+<input type="button" onclick="cover();" value="面积测量"/>
+</div>
+<div>
+<h4>空间分析</h4>
+<input type="button" style=" width:100px;" onclick="volume();" value="挖填方分析"/>
+<input type="button" style=" width:100px;" onclick="section();" value="剖面分析"/><br />
+<input type="button" style=" width:100px;" onclick="intervisibility();" value="通视分析"/>
+<input type="button" style=" width:100px;" onclick="ken();" value="视域分析"/><br />
+<input id="high" type="text" value="20" style=" width:100px;"/>
+<input type="button" style=" width:100px;" onclick="high();" value="控高分析"/><br />
+<input type="button" style=" width:100px;" onclick="danger();" value="危险域分析"/><br />
+<input type="button" style=" width:100px;" onclick="isohypse();" value="等高线分析"/>
+<input type="button" style=" width:100px;" onclick="shadow();" value="阴影分析"/><br />
+<input type="button" style=" width:100px;" onclick="submerge();" value="淹没分析"/>
+<input type="button" style=" width:100px;" onclick="route();" value="最短路径分析"/>
+
+
+</div>
+<div>
+<h4>空间查询</h4>
+<input type="button" onclick="tance();" value="水平距离"/>
+</div>
+</div>
+<div>
+</div>
+</body>
+</html>

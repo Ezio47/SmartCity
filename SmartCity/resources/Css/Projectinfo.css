@@ -1,0 +1,368 @@
+﻿ body
+        {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            color: #2C3D5A;
+        }
+   .divpagesize
+   {
+        position:absolute;
+        top:0;
+        bottom:0;
+        min-height:700px;
+        width:1280px;
+        background-color:White; 
+       }
+/*工具条*/
+
+#funsshow
+{
+    position: absolute;
+    right: 0px; /*bottom: 15px;*/
+    width: 350px;
+    font-weight: bold;
+    bottom: 0px;
+}
+#funsshow ul
+{
+    width: 100%;
+    line-height: 22px;
+}
+
+#funsshow ul li
+{
+    float: left;
+    margin-right: 10px;
+    line-height: 30px;
+}
+
+
+#funsshow ul li a
+{
+    color: black;
+} 
+/*工作区*/
+#workbenchprj
+{
+    position: absolute;
+    left: 0;
+    top: 111px;
+    right: 0;
+    bottom: 22px;
+    /*background-color:#499AC7;*/
+    background-image:url('/resources/images/primg/bg.png');
+}
+
+/*页脚*/
+#footerprj
+{
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+    height: 22px;
+    text-align: center;
+    line-height: 22px; /*background: url('images/bottombar.gif') repeat-x scroll;*/
+    background-color: #0092d5;
+    color: #F1F9FE;
+}
+
+#contentleft
+{
+     position: absolute;
+     left:0;
+     bottom:0;
+     top:0;
+     width:639px;
+    }
+#contentright
+{
+     position: absolute;
+     left:640px;
+     right:0;
+     top:0;
+     bottom:0;
+    }
+#lefttopprj
+{
+    position:relative;
+    margin:0;
+    /*margin-top:5px; 
+    margin-left:5px;
+    margin-right:5px;
+    border:solid 1px gray;*/
+    margin-top:3px; 
+    margin-left:3px;
+    height:45%;
+     
+    }
+#leftmidprj
+{
+    position:relative;
+     margin-left:3px;
+    height:32%;
+    }
+#leftbottomprj
+{
+    position:relative;
+     margin-left:3px; 
+    }
+#rightprjtop
+{
+    position:relative;
+    height:75%;
+    margin-top:3px; 
+    margin-right:3px;
+    }
+ #rightprjbottom
+ {
+     position:relative;
+      margin-right:3px;
+     }
+ /* 内容区域内背景样式*/ 
+.divstyletopnew
+{
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:13px;
+    background-image:url('/resources/images/primg/top.png');
+    } 
+    .divstylemiddlenew
+{
+    position:absolute;
+    top:13px;
+    left:0;
+    right:0;
+    bottom:10px;
+    background-image:url('/resources/images/primg/middle.png');
+    }
+ .divstylebottomnew
+ {
+     position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    height:10px;
+    background-image:url('/resources/images/primg/bottom.png');
+     } 
+/*内容标题*/ 
+  .divtitlestyle
+  {
+      position:absolute;
+      top:0;
+      left:270px;
+      height:20px;
+      }   
+  /*内部框样式*/  
+ .innertop
+ {
+     position:absolute;
+     right:0;
+     left:0;
+     height:10px;
+     top:7px;
+     background-image:url('/resources/images/primg/intop.png');
+     }
+ .innercenter
+ {
+     position:absolute;
+     right:0;
+     left:0;
+     bottom:7px;
+     top:12px;
+     background-image:url('/resources/images/primg/incenter.png');
+     }
+ .innerbottom
+ {
+    position:absolute;
+    right:0;
+    left:0;
+    height:11px;
+    bottom:0;
+    background-image:url('/resources/images/primg/inbottom.png');
+     }
+ /**/
+ .prjysmargintop
+ {
+     position:absolute;
+     right:0;
+     /*top:22px;*/
+     bottom:0;
+     left:30px; 
+     text-align:center;
+     }
+  /*项目基本信息图片*/
+ #img_prj{
+     position:absolute; left:0px;right:0;top:0px; width:100%;
+     }
+ 
+ /*报批报建按钮颜色，红，黄，绿*/
+.greenprjbutton
+{
+    width:140px;
+    height:30px;
+    font-family:'Microsoft YaHei';
+    font-weight:bolder;
+    background: #222 url(overlay.png) repeat-x;
+	display: inline-block;
+	padding: 5px 10px 6px;
+	color: #fff;
+	text-decoration: none;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	-moz-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+	-webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+	text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+	border-bottom: 1px solid rgba(0,0,0,0.25);
+	position: relative;
+	cursor: pointer;
+	background-color: #749a02; 
+	letter-spacing:1px;
+    }
+ .greenprjbutton:hover
+ {
+      background-color: #91bd09;
+     }
+ .yellowprjbutton
+{
+    width:140px;
+    height:30px;
+    font-family:'Microsoft YaHei';
+     font-weight:bolder;
+    background: #222 url(overlay.png) repeat-x;
+	display: inline-block;
+	padding: 5px 10px 6px;
+	color: #fff;
+	text-decoration: none;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	-moz-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+	-webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+	text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+	border-bottom: 1px solid rgba(0,0,0,0.25);
+	position: relative;
+	cursor: pointer;
+	 background-color:#fc9200;/*background-color: #ffb515;  */ 
+	 letter-spacing:1px;
+    }
+.yellowprjbutton:hover
+{
+    background-color: #ffb515; 
+    }
+ .redprjbutton
+{
+    width:140px;
+    height:30px;
+    font-family:'Microsoft YaHei';
+    font-weight:bolder;
+    background: #222 url(overlay.png) repeat-x;
+	display: inline-block;
+	padding: 5px 10px 6px;
+	color: #fff;
+	text-decoration: none;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	-moz-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+	-webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+	text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+	border-bottom: 1px solid rgba(0,0,0,0.25);
+	position: relative;
+	cursor: pointer;
+	background-color: #cf2525;/**/
+	letter-spacing:1px;
+    }
+.redprjbutton:hover
+{
+     background-color: red;
+    }
+/*规划设计按钮样式*/
+.ghsjbtnstyle
+{
+    width:250px;
+    height:40px;
+    font-family:'Microsoft YaHei';
+    font-weight:bolder;
+   /*background: #222 url(overlay.png) repeat-x;*/ 
+	display: inline-block;
+	padding: 5px 10px 6px;
+	color: #fff;
+	text-decoration: none;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	-moz-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+	-webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+	text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+	border-bottom: 1px solid rgba(0,0,0,0.25);
+	position: relative;
+	cursor: pointer;
+	background-color: #3A7EBD;/*#3A7EBD*/
+	font-size:18px;
+	font-weight:bold;
+	letter-spacing:2px;
+    }  
+  .ghsjbtnstyle:hover
+  {
+      background-color: #2270B8;
+      } 
+  .aclickstyle
+  {
+      color:#3A7EBD;
+      cursor:pointer;
+      font-family:'Microsoft YaHei';
+      }
+  .aclickstyle:hover
+  {
+      color:Red;
+      text-decoration:underline;
+      }
+  .constractHihtchar
+  {
+      position:absolute;
+      left:3px;
+     
+      bottom:0px;
+      right:0;
+      }
+ /* 项目验收 蓝色 */
+  .blueprjbutton
+{
+    width:110px;
+    height:30px;
+    font-family:'Microsoft YaHei';
+    font-weight:bolder;
+    background: #222 url(overlay.png) repeat-x;
+	display: inline-block;
+	padding: 5px 10px 6px;
+	color: #fff;
+	text-decoration: none;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	-moz-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+	-webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+	text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+	border-bottom: 1px solid rgba(0,0,0,0.25);
+	position: relative;
+	cursor: pointer;
+	background-color: #3A7EBD;
+	letter-spacing:1px;
+    }
+.blueprjbutton:hover
+{
+     background-color:  #2270B8;
+    }
+ .opendetailinfostyle
+ {
+     position:absolute;
+     right:17px;
+     top:12px;
+     width:60px;
+     height:20px;
+     }
+ 
+ 

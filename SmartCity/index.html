@@ -1,0 +1,96 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>项目地址</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+    <script src="js/jquery-1.10.2.js" type="text/javascript"></script>
+    <script src="js/util.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var sgworld = null;
+        function Init() {
+            sgworld = CreateSGObj();
+            sgworld.AttachEvent("OnLoadFinished", OnLoadFinished);
+            window.document.getElementById("TE3DWindow").style.width = window.document.documentElement.clientWidth;
+            //window.document.getElementById("TE3DWindow").style.height = window.document.documentElement.clientHeight;
+            var file = "D:\\ZOLProject\\projectText\\Default.fly";
+            sgworld.Open(file);
+
+            try {
+                window.onresize = Resize;
+            }
+            catch (e) {
+                window.onresize = Resize();
+            }
+
+        }
+
+        function Resize() {
+            window.document.getElementById("TE3DWindow").style.width = window.document.documentElement.clientWidth;
+            //window.document.getElementById("TE3DWindow").style.height = window.document.documentElement.clientHeight;
+        }
+
+        function OnLoadFinished() {
+            try {
+                Identify();
+            } catch (e) {
+
+            }
+        }
+
+        function showDetialInfo(name) {
+            try {
+                // window.parent.openProjectPage();
+                $('#frame').attr("src", 'http://localhost:8089/BlankPage.htm?type=1');
+            } catch (e) {
+                window.open("https://www.baidu.com?name=" + name);
+            }
+
+        }
+
+        //注册点击查询事件
+        function Identify() {
+            sgworld.AttachEvent("OnLButtonDown", doIdentify);
+        }
+        //属性查询
+        function doIdentify(Flags, X, Y) {
+            var CursorCoord = sgworld.Window.PixelToWorld(X, Y);
+            if (CursorCoord.Type) {
+                var feature = null;
+                try {
+                    feature = sgworld.Creator.GetObject(CursorCoord.ObjectID);
+                    if (feature.ObjectType === 18) //标签
+                    {
+                        sgworld.Window.SetInputMode(1);
+                        showDetialInfo(feature.Text);
+                    } else if (feature.ObjectType === 33) {// OT_FEATURE
+                        var attrs = feature.FeatureAttributes; //IFeatureAttributes66
+                        showDetialInfo(attrs(1).Value);
+                    } else {
+                        sgworld.Window.SetInputMode(0);
+                    }
+
+                } catch (e) {
+                    sgworld.Window.SetInputMode(0);
+
+                }
+            } else {
+                sgworld.Window.SetInputMode(0);
+
+            }
+            return true;
+        }
+
+
+        $(function () {
+            Init();
+        });
+    </script>
+</head>
+<body>
+    <div style=" height: 290px; width: 835px;">
+        <object id="TE3DWindow" style="height: 100%; width: 835px;" classid="clsid:3a4f9192-65a8-11d5-85c1-0001023952c1">
+        </object>
+    </div>
+    <iframe id="frame" src=""></iframe>
+</body>
+</html>

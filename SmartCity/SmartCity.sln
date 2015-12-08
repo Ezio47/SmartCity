@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "SmartCity", ".", "{7DDEEC77-A6A2-4EE5-B583-AA822E1A3F51}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/SmartCity"
+		Debug.AspNetCompiler.PhysicalPath = "E:\GitProject\SmartCity\SmartCity\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\SmartCity\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/SmartCity"
+		Release.AspNetCompiler.PhysicalPath = "E:\GitProject\SmartCity\SmartCity\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\SmartCity\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "39091"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7DDEEC77-A6A2-4EE5-B583-AA822E1A3F51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DDEEC77-A6A2-4EE5-B583-AA822E1A3F51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

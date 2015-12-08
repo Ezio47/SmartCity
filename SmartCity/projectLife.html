@@ -1,0 +1,296 @@
+﻿<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>ToolTitle</title>
+    <style>
+        .MenuButton        {            height: 78px;            width: 65px;            margin: 5px;            white-space: normal;  }
+        .MenuButtonHighlight        {            color: Red;            font-weight: bold;        }
+        .tableHeader {background-color:Silver}
+        
+    </style>
+</head>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" style="border: 0;
+    overflow: auto;" id="Body" onload="Init()">
+    <!-- onclick="bHide=true;HideOptionsNow()" > -->
+    <table border="0" width="100%" cellspacing="0" cellpadding="2">
+        <tr>
+            <td id="TopAreaTD" height="50px" width="100%" valign="middle" style="background-color: #CAD8E2">
+                <table border="0" width="100%" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td width="12px"></td>
+                        <td width="55px"><img alt="find" src="TimeStampIcon.gif" /></td>
+                        <td id="TitleTD" align="center" class="s12b i18n">ToolName</td>
+                        <td valign="top" align="right" id="CloseHelpTd"><img src="../CommonImg/help.gif" border="0" class="i18n" alt="help" title="help" onclick="DisplayHelpPopup6(SGLang.i18nFile('help.html'),SGLang.i18n('help'))" style="cursor: pointer;"></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr height="1px">
+            <td style="background-repeat: repeat-x;" background="../CommonImg/separator.gif">
+            </td>
+        </tr>
+        <tr>
+            <td>                <br />            </td>
+        </tr>
+    </table>
+    <table>
+        <tr class="s8">
+            <td colspan="2">
+                <table border="0" cellspacing="0" cellpadding="1" bgcolor="#ffffff" class="s8">
+                        <tr class='TableOtherLine'>
+                        <td align="top" class="s8b i18n">Text15</td>
+                        <td align="left">                            
+                            &nbsp;<select id="Select1" size="1"  style="z-index: 1;">
+                                <option value="0" class="i18n" selected>Text16</option>
+                            </select>
+                        </td>
+                    </tr>                             
+                     <tr class="s8">
+                        <td align="top" class="s8b i18n">                            Text1                        </td>
+                        <td align="left">                            &nbsp;
+                            <input type="text" name="date" id="start_date_c" readonly="1" />
+                            <img alt="start" src="./jscalendar/img.gif" id="start_trigger_c" style="cursor: pointer; border: 0px;" title="Start Date and Time" onmouseover="this.style.background='red';" onmouseout="this.style.background=''" />
+                        </td>
+                    </tr>
+                    <tr class='TableOtherLine'>
+                        <td align="top" class="s8b i18n">
+                            Text2
+                        </td>
+                        <td align="left">
+                            &nbsp;
+                            <input type="text" name="date" id="end_date_c" readonly="1" />
+                            <img alt="End" src="./jscalendar/img.gif" id="end_trigger_c" style="cursor: pointer; border: 0px;" title="End Date and Time" onmouseover="this.style.background='red';" onmouseout="this.style.background=''" />
+                        </td>
+                    </tr>
+                    <tr class="s8">
+                        <td align="top" class="s8b i18n">Text11</td>
+                        <td align="left">                            
+                            &nbsp;<select id="handleSubGroups" size="1"  style="z-index: 1;">
+                                <option value="0" class="i18n" selected>Text12</option>
+                                <option value="1" class="i18n" >Text13</option>
+                            </select>
+                        </td>
+                    </tr>                    
+                </table>
+            </td>
+        </tr>
+        <tr class="s8">
+            <td colspan="2">
+                <button id="groupButton" class="MenuButton" onclick="SelectGroupObjects(1)"> <img src="group.gif" /><br /> <span class="i18n">Text5</span></button>
+                <button id="cleanButton" class="MenuButton" onclick="SelectGroupObjects(2)"> <img src="clean.gif" /><br /> <span class="i18n">Text8</span></button>
+            </td>
+        </tr>
+        <tr>
+        <td>
+                <span id="resultLine"></span>
+            <table border=1 id="objectsTable">
+            </table>
+        </td>
+        </tr>
+    </table>
+    <object id="SGWorld" classid="CLSID:3a4f91b0-65a8-11d5-85c1-0001023952c1">
+    </object>
+</body>
+
+<script language="javascript" src="../ToolsCommon.js"></script>
+
+<!-- import the calendar script -->
+
+<script type="text/javascript" src="./jscalendar/calendar.js"></script>
+<script type="text/javascript">
+    //-------------------
+    // load lang file for calendar
+
+    (function () {
+        document.write("<script language='javascript' src='./jscalendar/calendar-lang.js'></" + "script>");
+        var code = SGLang.getCode();
+        document.write("<script  language='javascript' src='./jscalendar/" + code + "/calendar-lang.js'></" + "script>");
+    })();
+</script>
+<script type="text/javascript" src="./jscalendar/calendar-setup.js"></script>
+
+<script language="jscript">
+
+    var startTime;
+    var endTime;
+    var objectsTableContent;
+    var numObjects;
+    var deltaTime;
+
+    // Init
+    function Init() {
+
+        SGWorld.Window.ShowControls(SGWorld.Window.GetControls() | 64); // Turn on the time control
+        Reset(0, 0);
+    }
+
+    //--------------
+    // Reset
+    function Reset(FirstTime, FromMouseInputMode) {
+
+        $("#groupButton").removeClass("MenuButtonHighlight");
+        $("#cleanButton").removeClass("MenuButtonHighlight");
+        SGWorld.ProjectTree.EnableRedraw(1);
+        SGWorld.Window.HideMessageBarText();
+        numObjects = 0;
+
+    }
+    //-----------
+    // SelectGroupObjects
+    function SelectGroupObjects(action) {
+        var parentNode = SGWorld.ProjectTree.GetNextItem(0, 10);
+        if (parentNode == 0 || !(SGWorld.ProjectTree.IsGroup(parentNode))) {
+            alert(SGLang.i18n("Text69"));
+            return;
+        }
+        startTime = Date.parseDate($("#start_date_c").val(), "%b %e, %Y %H:%M").getTime();
+        endTime = Date.parseDate($("#end_date_c").val(), "%b %e, %Y %H:%M").getTime();
+
+        if (action == 1 && (isNaN(startTime) || isNaN(endTime))) {
+            alert(SGLang.i18n("Text6"));
+            return;
+        }
+        $("#objectsTable").html("");
+        objectsTableContent = "";
+        $(event.srcElement).addClass("MenuButtonHighlight");
+        SGWorld.Window.ShowMessageBarText(SGLang.i18n("Text7"), -1);
+        SGWorld.Window.ShowControls(SGWorld.Window.GetControls() | 64); // Turn on the time control
+        SGWorld.ProjectTree.EnableRedraw(0);
+
+        searchLeaf(parentNode, 0, 0);
+        deltaTime = (endTime - startTime) / numObjects;
+        searchLeaf(parentNode, action, 0);
+
+        if (action == 1)
+            $("#resultLine").html(SGLang.i18n("Text9") + numObjects + " <a onclick='showResultTable(" + parentNode + ");'><u>" + SGLang.i18n("Text10") + "</u></a>");
+
+        Reset(0, 0);
+    }
+    //--------------
+    //showResultTable
+    function showResultTable(parentNode) {
+        objectsTableContent = "<h1 style='width:100%;text-align:center'>" + SGLang.i18n("Text14") + "</h1><style>td { border:solid 1px black;padding-left:5px;padding-right:5px;font-family:  Arial, Helvetica, sans-serif; font-size: 12px; font-style: normal; font-weight: normal; }</style><table style='width:100%;height:100%' cellspacing=0 cellpadding=1><tr style='background-color:#3F5875;color:white;text-align:center' ><td >" + SGLang.i18n("Text70") + "</td> <td>" + SGLang.i18n("Text1") + "</td><td>" + SGLang.i18n("Text71") + "</td><td>" + SGLang.i18n("Text2") + "</td></tr>";
+        searchLeaf(parentNode, 3, 0);
+        objectsTableContent += "<tr style='height:100%'><td colspan='4' /></tr></table>";
+        var rowCount = $(objectsTableContent).find("tr").length;
+        var resultPopup = SGWorld.Creator.CreatePopupMessage(SGLang.i18n("Text14"), "", 50, 50, 550, Math.min(400, rowCount * 20 + 100), -1);
+        resultPopup.InnerHTML = objectsTableContent;
+        resultPopup.AllowDrag = true;
+        resultPopup.AllowResize = true;
+        SGWorld.Window.ShowPopup(resultPopup);
+
+        //$("#objectsTable").append(objectsTableContent);
+    }
+    //-------------------
+    // searchGeometries
+    function searchLeaf(parentNode, action, level) {
+        var node = SGWorld.ProjectTree.GetNextItem(parentNode, 11);
+        SGWorld.ProjectTree.SetGroupStartTime(parentNode, 0);
+        SGWorld.ProjectTree.SetGroupEndTime(parentNode, 0);
+        while (node != -1 && node != 0) {
+            if (!SGWorld.ProjectTree.IsLayer(node)) {
+                if (SGWorld.ProjectTree.IsGroup(node)) {
+                    searchLeaf(node, action, level + 1);
+                    if (action == 1 && level == 0 && $("#handleSubGroups").attr("value") == "1")
+                        startTime += deltaTime
+                    if (action == 0 && level == 0 && $("#handleSubGroups").attr("value") == "1")
+                        numObjects++;
+                }
+                else {
+                    var Object = SGWorld.ProjectTree.GetObject(node);
+                    if (Object != null) {
+                        switch (action) {
+                            case 0: // count objects
+                                if (level == 0 || $("#handleSubGroups").attr("value") == "0")
+                                    numObjects++;
+                                break;
+                            case 1: // Set time 
+                                SetTimes(Object);
+                                if (level == 0 || $("#handleSubGroups").attr("value") == "0")
+                                    startTime += deltaTime
+                                break;
+                            case 2:  // Clean    
+                                CleanTimes(Object);
+                                break;
+                            case 3:   // Get time
+                                GetTimes(Object);
+                                break;
+                        }
+                    }
+                }
+            }
+            node = SGWorld.ProjectTree.GetNextItem(node, 13);
+        }
+    }
+    //-------------
+    // SetTimes
+    function SetTimes(Object) {
+        try {
+            Object.TimeSpan.Start = startTime;
+            Object.TimeSpan.End = startTime + deltaTime;
+        }
+        catch (e) { }
+    }
+    //-------------
+    // SetTimes
+    function GetTimes(Object) {
+        //try
+        //{
+        if (!Object.TimeSpan)
+            return;
+
+        var objStartDate = new Date(Object.TimeSpan.Start)
+        var objEndDate = new Date(Object.TimeSpan.End)
+        var objDeltaDateDays = Math.floor((objEndDate.getTime() - objStartDate.getTime()) / 86400000);
+        var objDeltaDatehours = Math.floor((objEndDate.getTime() - objStartDate.getTime()) / 3600000) - (objDeltaDateDays * 24);
+        var objDeltaDateMin = (objEndDate.getTime() - objStartDate.getTime()) / 60000 - (objDeltaDatehours * 60) - (objDeltaDateDays * 1440);
+        objDeltaDateMin = Math.floor((objDeltaDateMin + .005) * 100) / 100;
+
+        startTimeStr = objStartDate.toDateString() + " " + prettyDate(objStartDate); // objStartDate.getHours() + ":" + objStartDate.getMinutes()
+        endTimeStr = objEndDate.toDateString() + " " + prettyDate(objEndDate); //objEndDate.getHours() + ":" + (objEndDate.getMinutes())? objEndDate.getMinutes()
+        objectsTableContent += "<tr><td >" + Object.TreeItem.Name + "</td> <td>" + startTimeStr + "</td><td>" + objDeltaDateDays + "d " + objDeltaDatehours + "h " + objDeltaDateMin + "m </td><td>" + endTimeStr + "</td></tr>";
+        //}
+        //catch (e) {}
+    }
+    function prettyDate(date) {
+        var Hours = date.getHours() + "";
+        if (Hours.length == 1)
+            Hours = "0" + Hours;
+
+        var minutes = date.getMinutes() + "";
+        if (minutes.length == 1)
+            minutes = "0" + minutes;
+
+        return Hours + ":" + minutes;
+    }
+    //-------------
+    // CleanTimes
+    function CleanTimes(Object) {
+        try {
+            Object.TimeSpan.Start = 0;
+            Object.TimeSpan.End = 0;
+        }
+        catch (e) { }
+    }
+
+    //----------------
+    Calendar.setup({
+        inputField: "start_date_c",     // id of the input field
+        ifFormat: "%b %e, %Y %H:%M",      // format of the input field
+        button: "start_trigger_c",  // trigger for the calendar (button ID)
+        align: "Tl",           // alignment (defaults to "Bl")
+        showsTime: true,            // will display a time selector
+        singleClick: true
+    });
+    Calendar.setup({
+        inputField: "end_date_c",     // id of the input field
+        ifFormat: "%b %e, %Y %H:%M",      // format of the input field
+        button: "end_trigger_c",  // trigger for the calendar (button ID)
+        align: "Tl",           // alignment (defaults to "Bl")
+        showsTime: true,            // will display a time selector
+        singleClick: true
+    });
+
+
+</script>
+
+</html>

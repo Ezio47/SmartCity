@@ -1,0 +1,349 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>DHtmlxGantt甘特图显示</title>
+    <script src="resources/dhtmlgantt/dhtmlxgantt.js" type="text/javascript" charset="utf-8"></script>
+    <script src="resources/dhtmlgantt/dhtmlxgantt_tooltip.js" type="text/javascript" charset="gb2312"></script>
+	<link rel="stylesheet" href="resources/Css/dhtmlxgantt.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <script src="resources/dhtmlgantt/locale_cn.js" charset="utf-8"></script>
+    <script type="text/javascript" language="javascript" src="resources/Scripts/tools.js"></script>
+    <script src="resources/Scripts/jquery-1.9.0.js"  type="text/javascript"></script>
+     <script src="resources/layer/layer.js" type="text/javascript"></script>
+    
+        <script src="tool/lifeCycle/jquery-1.4.4.min.js" type="text/javascript"></script>
+    <script src="tool/lifeCycle/jqslider.js" type="text/javascript"></script>
+    <link href="tool/lifeCycle/jqslider.css" rel="stylesheet" type="text/css" />
+
+    <style type="text/css">
+        html, body{ height:100%; padding:0px; overflow: hidden;}
+        .divsize
+        {
+           /* width:100%;
+            height:100%;*/
+            position:absolute;
+            left:0;
+            right:0;
+            top:0;
+            bottom:30px;
+            }
+            .maxSize
+            {
+                height:100% !important;
+                width:100% !important;
+                }
+        .divFixsize
+        {
+            width:740px;
+             height:230px
+            }
+        .bodyclass
+        {
+            margin:0px;
+            }
+        #divSetScal
+        {
+            position:absolute;
+            left:0px;
+            right:0px;
+            bottom:0px;
+            height:30px;
+            background-color: #C1D7F2;
+            }
+    </style>
+
+    <script type="text/javascript">
+       
+      
+
+    </script>
+
+</head>
+<body id="aa"  style="background-color: #F9F9F9; ">
+    <div id="dhtmlxgantt_here" ></div>
+    <div id="divSetScal" >
+      <table style="width:100%;height:100%;">
+        <tr>
+            <td width="100px" align="right">格式：</td>
+            <td>
+                <input id="rd_Day" value="0" type="radio" name="rdGrouptype" onclick="changeScal(0)"  />天&nbsp;&nbsp
+                <input id="rd_Week" value="1" checked type="radio" name="rdGrouptype" onclick="changeScal(1)"  />周&nbsp;&nbsp;
+                <input id="rd_Month" value="2" type="radio" name="rdGrouptype"  onclick="changeScal(2)"  />月&nbsp;&nbsp;&nbsp;&nbsp;
+               <input id="Radio1" value="2" type="radio" name="rdGrouptype"  onclick="changeScal(3)"  />年&nbsp;&nbsp;&nbsp;&nbsp;
+               
+            </td>
+        </tr>
+      </table>
+    </div>
+    <script type="text/javascript">
+
+        var m_time = 1;//刷新频率，单位：s  10
+        var m_time_his = 0.5;//1s 前进一条数据  0.5
+        var m_timeout;
+        var iStart = 1;
+        var iEnd = 0;
+
+        var tableData;
+        var startValue = 1;
+        var endValue = 12;
+        var array = ["地下室", "一层", "二层", "三层", "四层", "五层", "六层", "七层", "八层", "九层", "十层", "十一层"];
+        var arrayObj = new Array();
+        var ml;
+        function ini_my() {
+            ml = sgworld.ProjectTree.GetObject(sgworld.ProjectTree.FindItem("模型\\12号建筑"));
+            //sgworld.ProjectTree.SetVisibility(ml.ID, false);
+            for (var i = 0; i < array.length; i++) {
+                for (var j = 0; j < ml.FeatureLayers.Count; j++) {
+                    var name = ml.FeatureLayers.Item(j).TreeItem.Name;
+                    if (name.indexOf(array[i]) >= 0) {
+                        arrayObj.push(ml.FeatureLayers.Item(j));
+                        break;
+                    }
+                }
+            }
+        }
+
+        function ini_my(modedir) {
+            ml = sgworld.ProjectTree.GetObject(sgworld.ProjectTree.FindItem(modedir));
+            //sgworld.ProjectTree.SetVisibility(ml.ID, false);
+            for (var i = 0; i < array.length; i++) {
+                for (var j = 0; j < ml.FeatureLayers.Count; j++) {
+                    var name = ml.FeatureLayers.Item(j).TreeItem.Name;
+                    if (name.indexOf(array[i]) >= 0) {
+                        arrayObj.push(ml.FeatureLayers.Item(j));
+                        break;
+                    }
+                }
+            }
+        }
+
+        $(document).ready(function () {
+            //copy data
+            //ini_my();
+            ini_my("模型\\12号建筑\\12#地下室-三维视图-{三维}");
+            ini_my("模型\\12号建筑\\12#一层-三维视图-{三维}");
+            ini_my("模型\\12号建筑\\12#二层-三维视图-{三维}");
+            ini_my("模型\\12号建筑\\12#三层-三维视图-{三维}");
+            ini_my("模型\\12号建筑\\12#四层-三维视图-{三维}");
+            ini_my("模型\\12号建筑\\12#五层-三维视图-{三维}");
+            ini_my("模型\\12号建筑\\12#六层-三维视图-{三维}");
+            ini_my("模型\\12号建筑\\12#七层-三维视图-{三维}");
+            ini_my("模型\\12号建筑\\12#八层-三维视图-{三维}");
+            ini_my("模型\\12号建筑\\12#九层-三维视图-{三维}");
+            ini_my("模型\\12号建筑\\12#十层-三维视图-{三维}");
+            ini_my("模型\\12号建筑\\12#十一层-三维视图-{三维}");
+            /*
+            tableData = $('<table/>');
+            $('#demo-data tbody tr').each(function (index) {
+                tableData.append($(this).clone());
+            });
+            var sliderContainer = $('#demo-slider-container');
+            sliderContainer.html('');
+            var sl = $('<div/>').attr('id', 'default');
+            $('#default').attr('width', '400px');
+            sliderContainer.append(sl);
+            sl.jqslider({ rangeSelection: true, theme: 'default', selStart: startValue, selEnd: endValue, ticks: true, minValue: 1, maxValue: 12, callback: onSlide });
+            */
+        });
+
+        function onSlide(selectionStart, SelectionEnd) {
+
+            //$('#text').html(selectionStart);
+            startValue = selectionStart;
+            endValue = SelectionEnd;
+
+            //var ml = sgworld.ProjectTree.GetObject(sgworld.ProjectTree.FindItem("模型\\13号建筑"));
+            //sgworld.ProjectTree.SetVisibility(ml.ID, false);
+
+            for (var i = 0; i < 12; i++) {
+                if ((i < selectionStart - 1) || (i >= SelectionEnd)) {
+
+                    sgworld.ProjectTree.SetVisibility(arrayObj[i].ID, false);
+                }
+
+                else if (sgworld.ProjectTree.GetVisibility(arrayObj[i].ID) == 0) {
+                    sgworld.ProjectTree.SetVisibility(arrayObj[i].ID, true);
+                }
+            }
+
+            /*
+            $('#demo-data tbody tr').remove();
+            if (tableData != null) {
+                tableData.find('tr').each(function (index) {
+
+                    var id = parseInt($(this).find('td:eq(0)').html());
+                    if (id >= parseInt(selectionStart) && id <= parseInt(SelectionEnd)) {
+                        $('#demo-data tbody').append($(this).clone());
+                    }
+                });
+            }
+            */
+        }
+
+        function animation() {
+            iEnd = iEnd + 1;
+
+            startValue = iStart;
+            endValue = iEnd;
+            
+            for (var i = 0; i < 12; i++) {
+                if ((i < iStart - 1) || (i >= iEnd)) {
+
+                    sgworld.ProjectTree.SetVisibility(arrayObj[i].ID, false);
+                }
+
+                else if (sgworld.ProjectTree.GetVisibility(arrayObj[i].ID) == 0) {
+                    sgworld.ProjectTree.SetVisibility(arrayObj[i].ID, true);
+                }
+            }
+
+            if (iEnd <= 12) {
+                setTimeout(animation, 1000);
+            } else {
+                iEnd = 1;
+            }
+
+        }
+
+        function fnAnimation() {
+            //m_timeout = setInterval(animation, 1000);
+            if (iEnd <= 12) {
+                setTimeout(animation, 1000);
+            } 
+        }
+
+        //function fnStopAnimation() {
+        //    clearInterval(m_timeout);
+        //    iEnd = 1;
+        //}
+
+
+        $('#divSetScal').hide();
+        var type = QueryString("type");
+        //如果为1，则表示甘特图的大小100%
+        if (type == "1") {
+            $('#dhtmlxgantt_here').addClass("divsize");
+            $('#aa').addClass("bodyclass");
+            $('#divSetScal').show();
+        }
+        else {
+            $('#dhtmlxgantt_here').addClass("divFixsize");
+        }
+
+
+        function changeScal(type) {
+            //设置比例尺
+            setScal(type);
+            //如果是重新设置甘特图的X轴比例尺，则需要调用render方法
+            gantt.render();
+        }
+
+        //设置甘特图比例
+        function setScal(type) {
+            
+            //格式为天
+            if (type == "0") {
+                gantt.config.scale_unit = "month"; //X轴以天为单位day,month,week
+                gantt.config.date_scale = "%m月%Y"; //"Week #%W"; //"%F, %d";
+                gantt.config.scale_height = 50;
+                gantt.config.subscales = [
+		            { unit: "day", step: 1, date: "%d" }
+	                ];
+            }
+            //周
+            else if (type == "1") {
+                gantt.config.scale_unit = "month"; //X轴以天为单位day,month,week
+                gantt.config.date_scale = "%m月%Y"; //"Week #%W"; //"%F, %d";
+                gantt.config.scale_height = 50;
+                gantt.config.subscales = [
+		        { unit: "week", step: 1, date: "%W周" }
+	            ];
+            }
+            //月
+            else if (type == "2") {
+                gantt.config.scale_unit = "year"; //X轴以天为单位day,month,week
+                gantt.config.date_scale = "%Y年"; //"Week #%W"; //"%F, %d";
+                gantt.config.scale_height = 50;
+                gantt.config.subscales = [
+		        { unit: "month", step: 1, date: "%m月" }
+	            ];
+            }
+            //年
+            else if (type == "3") {
+                gantt.config.scale_unit = "year";
+                gantt.config.step = 1;
+                gantt.config.date_scale = "%Y年";
+                gantt.config.min_column_width = 50;
+                gantt.config.scale_height = 50;
+                gantt.templates.date_scale = null;
+                gantt.config.subscales = [];
+
+            }
+        }
+
+
+        var users_data = null;
+
+//        gantt.templates.task_text = function (start, end, task) {
+//            return "<b>文本:</b> " + task.text + ",<b> Holders:</b> " + task.users;
+        //                };
+        gantt.templates.task_text = function (start, end, task) {
+            return ''; //task.resources;
+        };
+
+        if (window.parent != null) {
+            //users_data = window.parent.tasks;
+            // users_data=@"{ data: [{id: 1, text: \"一、项目开工准备\", start_date: \"14-05-2014\", duration: 97,progress: 1, open: true,resources:\"一、项目开工准备\"},{id: 2, text: \"总包进场\", start_date: \"14-05-2014\", duration: 7,progress: 1, open: true,parent: 1,resources:\"总包进场\"},{id: 3, text: \"监理进场\", start_date: \"14-05-2014\", duration: 7,progress: 1, open: true,parent: 1,resources:\"监理进场\"},{id: 4, text: \"施工组织设计\", start_date: \"03-06-2014\", duration: 31,progress: 1, open: true,parent: 1,resources:\"施工组织设计\"},{id: 5, text: \"编制工程管理策划书\", start_date: \"21-05-2014\", duration: 61,progress: 1, open: true,parent: 1,resources:\"编制工程管理策划书\"},{id: 6, text: \"施工图会审和设计交底\", start_date: \"09-06-2014\", duration: 41,progress: 1, open: true,parent: 1,resources:\"施工图会审和设计交底\"},{id: 7, text: \"临建搭设完成\", start_date: \"14-05-2014\", duration: 71,progress: 1, open: true,parent: 1,resources:\"临建搭设完成\"},{id: 8, text: \"规划放线和验线\", start_date: \"13-06-2014\", duration: 14,progress: 1, open: true,parent: 1,resources:\"规划放线和验线\"},{id: 9, text: \"场地内现状地形测量\", start_date: \"24-06-2014\", duration: 7,progress: 1, open: true,parent: 1,resources:\"场地内现状地形测量\"},{id: 10, text: \"举行开工仪式\", start_date: \"18-08-2014\", duration: 1,progress: 1, open: true,parent: 1,resources:\"举行开工仪式\"},{id: 11, text: \"二、I战区14 #—16#楼工程计划                     （关键线路）   \", start_date: \"18-08-2014\", duration: 516,progress: 0.77, open: true,resources:\"二、I战区14 #—16#楼工程计划                     （关键线路）     \"},{id: 12, text: \"1号阵地16#楼计划总工期（关键线路）\", start_date: \"18-08-2014\", duration: 516,progress: 0.77, open: true,resources:\"1号阵地16#楼计划总工期（关键线路）\"},{id: 13, text: \"地下结构工程\", start_date: \"18-08-2014\", duration: 286,progress: 1, open: true,parent: 12,resources:\"地下结构工程\"},{id: 14, text: \"土方开挖\", start_date: \"18-08-2014\", duration: 40,progress: 1, open: true,parent: 13,resources:\"土方开挖\"},{id: 15, text: \"基坑支护\", start_date: \"20-08-2014\", duration: 38,progress: 1, open: true,parent: 13,resources:\"基坑支护\"},{id: 16, text: \"CFG桩施工\", start_date: \"08-10-2014\", duration: 45,progress: 1, open: true,parent: 13,resources:\"CFG桩施工\"},{id: 17, text: \"垫层、防水、基础底板\", start_date: \"22-11-2014\", duration: 50,progress: 1, open: true,parent: 13,resources:\"垫层、防水、基础底板\"},{id: 18, text: \"地下一层结构\", start_date: \"11-01-2015\", duration: 115,progress: 1, open: true,parent: 13,resources:\"地下一层结构\"},{id: 19, text: \"冬休\", start_date: \"09-02-2015\", duration: 45,progress: 1, open: true,parent: 13,resources:\"冬休\"},{id: 20, text: \"地下夹层结构\", start_date: \"06-05-2015\", duration: 10,progress: 1, open: true,parent: 13,resources:\"地下夹层结构\"},{id: 21, text: \"地下室外墙防水\", start_date: \"11-05-2015\", duration: 7,progress: 1, open: true,parent: 13,resources:\"地下室外墙防水\"},{id: 22, text: \"肥槽回填土\", start_date: \"18-05-2015\", duration: 13,progress: 1, open: true,parent: 13,resources:\"肥槽回填土\"},{id: 23, text: \"主体结构（地上1-10层）\", start_date: \"11-05-2015\", duration: 143,progress: 0.9, open: true,parent: 12,resources:\"主体结构（地上1-10层）\"},{id: 24, text: \"主体结构（一层）\", start_date: \"11-05-2015\", duration: 15,progress: 1, open: true,parent: 23,resources:\"主体结构（一层）\"},{id: 25, text: \"主体结构（二层）\", start_date: \"26-05-2015\", duration: 12,progress: 1, open: true,parent: 23,resources:\"主体结构（二层）\"},{id: 26, text: \"主体结构（三层至十层）\", start_date: \"07-06-2015\", duration: 55,progress: 1, open: true,parent: 23,resources:\"主体结构（三层至十层）\"},{id: 27, text: \"九层十层连廊钢结构安装\", start_date: \"18-08-2015\", duration: 44,progress: 0.67, open: true,parent: 23,resources:\"九层十层连廊钢结构安装\"},{id: 28, text: \"室内工程\", start_date: \"01-08-2015\", duration: 166,progress: 0.28, open: true,parent: 
+            users_data = "{ data: [{ id: 1, text: \"16号楼施工\", start_date: \"14-05-2014\", duration: 97, progress: 1, open: true, resources: \"16号楼施工\" }, { id: 2, text: \"地下一层\", start_date: \"14-05-2014\", duration: 7, progress: 1, open: true, parent: 1, resources: \"地下一层\" }, { id: 3, text: \"地上一层\", start_date: \"14-05-2014\", duration: 7, progress: 1, open: true, parent: 1, resources: \"地上一层\" }, { id: 4, text: \"地上二层\", start_date: \"03-06-2014\", duration: 31, progress: 1, open: true, parent: 1, resources: \"地上二层\" }, { id: 5, text: \"地上三层\", start_date: \"21-05-2014\", duration: 61, progress: 1, open: true, parent: 1, resources: \"地上三层\" }, { id: 6, text: \"地上四层\", start_date: \"09-06-2014\", duration: 41, progress: 1, open: true, parent: 1, resources: \"地上四层\" }, { id: 7, text: \"地上五层\", start_date: \"14-05-2014\", duration: 71, progress: 1, open: true, parent: 1, resources: \"地上五层\" }, { id: 8, text: \"地上六层\", start_date: \"13-06-2014\", duration: 14, progress: 1, open: true, parent: 1, resources: \"地上六层\" }, { id: 9, text: \"地上七层\", start_date: \"24-06-2014\", duration: 7, progress: 1, open: true, parent: 1, resources: \"地上七层\" }, { id: 10, text: \"地上八层\", start_date: \"18-08-2014\", duration: 1, progress: 1, open: true, parent: 1, resources: \"地上八层\" },{ id: 11, text: \"地上九层\", start_date: \"18-08-2014\", duration: 1, progress: 1, open: true, parent: 1, resources: \"地上九层\" },{ id: 12, text: \"地上十层\", start_date: \"18-08-2014\", duration: 1, progress: 1, open: true, parent: 1, resources: \"地上十层\" },{ id: 13, text: \"地上十一层\", start_date: \"18-08-2014\", duration: 1, progress: 1, open: true, parent: 1, resources: \"地上十一层\" }] }"
+            //users_data = "{ data: [{ id: 1, text: \"一、项目开工准备\", start_date: \"14-05-2014\", duration: 97, progress: 1, open: true, resources: \"一、项目开工准备\" }, { id: 2, text: \"总包进场\", start_date: \"14-05-2014\", duration: 7, progress: 1, open: true, parent: 1, resources: \"总包进场\" }, { id: 3, text: \"监理进场\", start_date: \"14-05-2014\", duration: 7, progress: 1, open: true, parent: 1, resources: \"监理进场\" }, { id: 4, text: \"施工组织设计\", start_date: \"03-06-2014\", duration: 31, progress: 1, open: true, parent: 1, resources: \"施工组织设计\" }, { id: 5, text: \"编制工程管理策划书\", start_date: \"21-05-2014\", duration: 61, progress: 1, open: true, parent: 1, resources: \"编制工程管理策划书\" }, { id: 6, text: \"施工图会审和设计交底\", start_date: \"09-06-2014\", duration: 41, progress: 1, open: true, parent: 1, resources: \"施工图会审和设计交底\" }, { id: 7, text: \"临建搭设完成\", start_date: \"14-05-2014\", duration: 71, progress: 1, open: true, parent: 1, resources: \"临建搭设完成\" }, { id: 8, text: \"规划放线和验线\", start_date: \"13-06-2014\", duration: 14, progress: 1, open: true, parent: 1, resources: \"规划放线和验线\" }, { id: 9, text: \"场地内现状地形测量\", start_date: \"24-06-2014\", duration: 7, progress: 1, open: true, parent: 1, resources: \"场地内现状地形测量\" }, { id: 10, text: \"举行开工仪式\", start_date: \"18-08-2014\", duration: 1, progress: 1, open: true, parent: 1, resources: \"举行开工仪式\" }, { id: 11, text: \"二、I战区14 #—16#楼工程计划                     （关键线路）     \", start_date: \"18-08-2014\", duration: 516, progress: 0.77, open: true, resources: \"二、I战区14 #—16#楼工程计划                     （关键线路）     \" }, { id: 12, text: \"1号阵地16#楼计划总工期（关键线路）\", start_date: \"18-08-2014\", duration: 516, progress: 0.77, open: true, resources: \"1号阵地16#楼计划总工期（关键线路）\" }, { id: 13, text: \"地下结构工程\", start_date: \"18-08-2014\", duration: 286, progress: 1, open: true, parent: 12, resources: \"地下结构工程\" }, { id: 14, text: \"土方开挖\", start_date: \"18-08-2014\", duration: 40, progress: 1, open: true, parent: 13, resources: \"土方开挖\" }, { id: 15, text: \"基坑支护\", start_date: \"20-08-2014\", duration: 38, progress: 1, open: true, parent: 13, resources: \"基坑支护\" }, { id: 16, text: \"CFG桩施工\", start_date: \"08-10-2014\", duration: 45, progress: 1, open: true, parent: 13, resources: \"CFG桩施工\" }, { id: 17, text: \"垫层、防水、基础底板\", start_date: \"22-11-2014\", duration: 50, progress: 1, open: true, parent: 13, resources: \"垫层、防水、基础底板\" }, { id: 18, text: \"地下一层结构\", start_date: \"11-01-2015\", duration: 115, progress: 1, open: true, parent: 13, resources: \"地下一层结构\" }, { id: 19, text: \"冬休\", start_date: \"09-02-2015\", duration: 45, progress: 1, open: true, parent: 13, resources: \"冬休\" }, { id: 20, text: \"地下夹层结构\", start_date: \"06-05-2015\", duration: 10, progress: 1, open: true, parent: 13, resources: \"地下夹层结构\" }, { id: 21, text: \"地下室外墙防水\", start_date: \"11-05-2015\", duration: 7, progress: 1, open: true, parent: 13, resources: \"地下室外墙防水\" }, { id: 22, text: \"肥槽回填土\", start_date: \"18-05-2015\", duration: 13, progress: 1, open: true, parent: 13, resources: \"肥槽回填土\" }, { id: 23, text: \"主体结构（地上1-10层）\", start_date: \"11-05-2015\", duration: 143, progress: 0.9, open: true, parent: 12, resources: \"主体结构（地上1-10层）\" }, { id: 24, text: \"主体结构（一层）\", start_date: \"11-05-2015\", duration: 15, progress: 1, open: true, parent: 23, resources: \"主体结构（一层）\" }, { id: 25, text: \"主体结构（二层）\", start_date: \"26-05-2015\", duration: 12, progress: 1, open: true, parent: 23, resources: \"主体结构（二层）\" }, { id: 26, text: \"主体结构（三层至十层）\", start_date: \"07-06-2015\", duration: 55, progress: 1, open: true, parent: 23, resources: \"主体结构（三层至十层）\" }, { id: 27, text: \"九层十层连廊钢结构安装\", start_date: \"18-08-2015\", duration: 44, progress: 0.67, open: true, parent: 23, resources: \"九层十层连廊钢结构安装\" }, { id: 28, text: \"室内工程\", start_date: \"01-08-2015\", duration: 166, progress: 0.28, open: true, parent: 12, resources: \"室内工程\" }, { id: 29, text: \"二次结构\", start_date: \"01-08-2015\", duration: 60, progress: 0.78, open: true, parent: 28, resources: \"二次结构\" }, { id: 30, text: \"内部初装修\", start_date: \"21-08-2015\", duration: 60, progress: 0.44, open: true, parent: 28, resources: \"内部初装修\" }, { id: 31, text: \"公共部位室内精装修\", start_date: \"05-10-2015\", duration: 90, progress: 0, open: true, parent: 28, resources: \"公共部位室内精装修\" }, { id: 32, text: \"室内水、暖、电及设备安装\", start_date: \"01-08-2015\", duration: 166, progress: 0.28, open: true, parent: 28, resources: \"室内水、暖、电及设备安装\" }, { id: 33, text: \"电梯安装\", start_date: \"30-09-2015\", duration: 90, progress: 0, open: true, parent: 28, resources: \"电梯安装\" }, { id: 34, text: \"消防工程\", start_date: \"31-08-2015\", duration: 120, progress: 0.13, open: true, parent: 28, resources: \"消防工程\" }, { id: 35, text: \"弱电工程\", start_date: \"15-09-2015\", duration: 120, progress: 0.01, open: true, parent: 28, resources: \"弱电工程\" }, { id: 36, text: \"室外装修工程\", start_date: \"10-09-2015\", duration: 128, progress: 0.05, open: true, parent: 12, resources: \"室外装修工程\" }, { id: 37, text: \"幕墙外装修\", start_date: \"10-09-2015\", duration: 128, progress: 0.05, open: true, parent: 36, resources: \"幕墙外装修\" }, { id: 38, text: \"I战区2号阵地14#楼\", start_date: \"25-03-2015\", duration: 282, progress: 0.62, open: true, resources: \"I战区2号阵地14#楼\" }, { id: 39, text: \"地下结构工程\", start_date: \"25-03-2015\", duration: 57, progress: 1, open: true, parent: 38, resources: \"地下结构工程\" }, { id: 40, text: \"地下一层结构（+-0）\", start_date: \"25-03-2015\", duration: 42, progress: 1, open: true, parent: 39, resources: \"地下一层结构（+-0）\" }, { id: 41, text: \"地下室外墙防水\", start_date: \"29-04-2015\", duration: 12, progress: 1, open: true, parent: 39, resources: \"地下室外墙防水\" }, { id: 42, text: \"肥槽回填土\", start_date: \"11-05-2015\", duration: 10, progress: 1, open: true, parent: 39, resources: \"肥槽回填土\" }, { id: 43, text: \"主体结构（地上1-7层）\", start_date: \"06-05-2015\", duration: 121, progress: 1, open: true, parent: 38, resources: \"主体结构（地上1-7层）\" }, { id: 44, text: \"主体结构（一层）\", start_date: \"06-05-2015\", duration: 15, progress: 1, open: true, parent: 43, resources: \"主体结构（一层）\" }, { id: 45, text: \"主体结构（二层）\", start_date: \"21-05-2015\", duration: 12, progress: 1, open: true, parent: 43, resources: \"主体结构（二层）\" }, { id: 46, text: \"主体结构（三层至七层）\", start_date: \"02-06-2015\", duration: 49, progress: 1, open: true, parent: 43, resources: \"主体结构（三层至七层）\" }, { id: 47, text: \"二次结构\", start_date: \"21-07-2015\", duration: 45, progress: 1, open: true, parent: 43, resources: \"二次结构\" }, { id: 48, text: \"室内工程\", start_date: \"06-07-2015\", duration: 178, progress: 0.41, open: true, parent: 38, resources: \"室内工程\" }, { id: 49, text: \"内部初装修\", start_date: \"10-08-2015\", duration: 60, progress: 0.63, open: true, parent: 48, resources: \"内部初装修\" }, { id: 50, text: \"室内精装修\", start_date: \"19-09-2015\", duration: 90, progress: 0, open: true, parent: 48, resources: \"室内精装修\" }, { id: 51, text: \"室内水、暖、电及设备安装\", start_date: \"18-07-2015\", duration: 166, progress: 0.36, open: true, parent: 48, resources: \"室内水、暖、电及设备安装\" }, { id: 52, text: \"电梯安装\", start_date: \"27-08-2015\", duration: 90, progress: 0.22, open: true, parent: 48, resources: \"电梯安装\" }, { id: 53, text: \"消防工程\", start_date: \"18-07-2015\", duration: 150, progress: 0.4, open: true, parent: 48, resources: \"消防工程\" }, { id: 54, text: \"弱电工程\", start_date: \"01-09-2015\", duration: 120, progress: 0.13, open: true, parent: 48, resources: \"弱电工程\" }, { id: 55, text: \"太阳能热水工程\", start_date: \"06-07-2015\", duration: 120, progress: 0.61, open: true, parent: 48, resources: \"太阳能热水工程\" }, { id: 56, text: \"室外装修工程\", start_date: \"03-09-2015\", duration: 120, progress: 0.11, open: true, parent: 38, resources: \"室外装修工程\" }, { id: 57, text: \"外保温工程\", start_date: \"04-09-2015\", duration: 20, progress: 0.63, open: true, parent: 56, resources: \"外保温工程\" }, { id: 58, text: \"涂料（瓷砖）工程\", start_date: \"24-09-2015\", duration: 30, progress: 0, open: true, parent: 56, resources: \"涂料（瓷砖）工程\" }, { id: 59, text: \"幕墙外装修工程\", start_date: \"03-09-2015\", duration: 120, progress: 0.11, open: true, parent: 56, resources: \"幕墙外装修工程\" }, { id: 60, text: \"I战区2号阵地15#楼\", start_date: \"02-04-2015\", duration: 210, progress: 0.8, open: true, resources: \"I战区2号阵地15#楼\" }, { id: 61, text: \"地下结构工程\", start_date: \"02-04-2015\", duration: 30, progress: 1, open: true, parent: 60, resources: \"地下结构工程\" }, { id: 62, text: \"地下一层结构（+-0）\", start_date: \"02-04-2015\", duration: 44, progress: 1, open: true, parent: 61, resources: \"地下一层结构（+-0）\" }, { id: 63, text: \"主体结构（地上1-3层）\", start_date: \"16-05-2015\", duration: 50, progress: 1, open: true, parent: 60, resources: \"主体结构（地上1-3层）\" }, { id: 64, text: \"主体结构（一层）\", start_date: \"16-05-2015\", duration: 15, progress: 1, open: true, parent: 63, resources: \"主体结构（一层）\" }, { id: 65, text: \"主体结构（二层）\", start_date: \"31-05-2015\", duration: 15, progress: 1, open: true, parent: 63, resources: \"主体结构（二层）\" }, { id: 66, text: \"主体结构（三层）\", start_date: \"15-06-2015\", duration: 20, progress: 1, open: true, parent: 63, resources: \"主体结构（三层）\" }, { id: 67, text: \"室内工程\", start_date: \"05-07-2015\", duration: 135, progress: 0.54, open: true, parent: 60, resources: \"室内工程\" }, { id: 68, text: \"内部初装修（含二次结构）\", start_date: \"05-07-2015\", duration: 45, progress: 1, open: true, parent: 67, resources: \"内部初装修（含二次结构）\" }, { id: 69, text: \"室内精装修\", start_date: \"18-09-2015\", duration: 60, progress: 0, open: true, parent: 67, resources: \"室内精装修\" }, { id: 70, text: \"室内水、暖、电及设备安装\", start_date: \"05-07-2015\", duration: 120, progress: 0.61, open: true, parent: 67, resources: \"室内水、暖、电及设备安装\" }, { id: 71, text: \"电梯安装\", start_date: \"04-08-2015\", duration: 90, progress: 0.48, open: true, parent: 67, resources: \"电梯安装\" }, { id: 72, text: \"消防工程\", start_date: \"05-07-2015\", duration: 120, progress: 0.61, open: true, parent: 67, resources: \"消防工程\" }, { id: 73, text: \"弱电工程\", start_date: \"05-07-2015\", duration: 120, progress: 0.61, open: true, parent: 67, resources: \"弱电工程\" }, { id: 74, text: \"室外装修工程\", start_date: \"21-07-2014\", duration: 120, progress: 1, open: true, parent: 60, resources: \"室外装修工程\" }, { id: 75, text: \"幕墙外装修工程\", start_date: \"04-08-2015\", duration: 120, progress: 0.36, open: true, parent: 74, resources: \"幕墙外装修工程\" }, { id: 76, text: \"三、II战区10 #—13#楼工程计划\", start_date: \"18-08-2014\", duration: 496, progress: 0.8, open: true, resources: \"三、II战区10 #—13#楼工程计划\" }, { id: 77, text: \"II战区1号阵地12#楼（样板楼工程）\", start_date: \"18-08-2014\", duration: 487, progress: 0.81, open: true, resources: \"II战区1号阵地12#楼（样板楼工程）\" }, { id: 78, text: \"地下结构工程\", start_date: \"18-08-2014\", duration: 297, progress: 1, open: true, parent: 77, resources: \"地下结构工程\" }, { id: 79, text: \"地下一层结构\", start_date: \"18-08-2014\", duration: 1, progress: 1, open: true, parent: 78, resources: \"地下一层结构\" }, { id: 80, text: \"地下一层夹层结构（+-0）\", start_date: \"15-12-2014\", duration: 40, progress: 1, open: true, parent: 78, resources: \"地下一层夹层结构（+-0）\" }, { id: 81, text: \"地下室外墙防水\", start_date: \"16-04-2015\", duration: 15, progress: 1, open: true, parent: 78, resources: \"地下室外墙防水\" }, { id: 82, text: \"肥槽回填土\", start_date: \"18-04-2015\", duration: 18, progress: 1, open: true, parent: 78, resources: \"肥槽回填土\" }, { id: 83, text: \"主体结构（地上1-5层）\", start_date: \"01-05-2015\", duration: 83, progress: 1, open: true, parent: 77, resources: \"主体结构（地上1-5层）\" }, { id: 84, text: \"主体结构（一层）\", start_date: \"01-05-2015\", duration: 15, progress: 1, open: true, parent: 83, resources: \"主体结构（一层）\" }, { id: 85, text: \"主体结构（二-五层）\", start_date: \"16-05-2015\", duration: 45, progress: 1, open: true, parent: 83, resources: \"主体结构（二-五层）\" }, { id: 86, text: \"二次结构\", start_date: \"23-06-2015\", duration: 30, progress: 1, open: true, parent: 83, resources: \"二次结构\" }, { id: 87, text: \"室内工程\", start_date: \"30-06-2015\", duration: 90, progress: 0.88, open: true, parent: 77, resources: \"室内工程\" }, { id: 88, text: \"内部初装修\", start_date: \"13-07-2015\", duration: 30, progress: 1, open: true, parent: 87, resources: \"内部初装修\" }, { id: 89, text: \"室内精装修\", start_date: \"28-07-2015\", duration: 50, progress: 1, open: true, parent: 87, resources: \"室内精装修\" }, { id: 90, text: \"室内水、暖、电及设备安装\", start_date: \"30-06-2015\", duration: 90, progress: 0.88, open: true, parent: 87, resources: \"室内水、暖、电及设备安装\" }, { id: 91, text: \"电梯安装\", start_date: \"07-08-2015\", duration: 45, progress: 0.91, open: true, parent: 87, resources: \"电梯安装\" }, { id: 92, text: \"消防工程\", start_date: \"30-06-2015\", duration: 90, progress: 0.88, open: true, parent: 87, resources: \"消防工程\" }, { id: 93, text: \"弱电工程\", start_date: \"30-07-2015\", duration: 60, progress: 0.81, open: true, parent: 87, resources: \"弱电工程\" }, { id: 94, text: \"室外装修工程\", start_date: \"21-04-2015\", duration: 45, progress: 1, open: true, parent: 77, resources: \"室外装修工程\" }, { id: 95, text: \"外保温工程\", start_date: \"16-07-2015\", duration: 30, progress: 1, open: true, parent: 94, resources: \"外保温工程\" }, { id: 96, text: \"涂料（瓷砖）工程\", start_date: \"15-08-2015\", duration: 45, progress: 0.73, open: true, parent: 94, resources: \"涂料（瓷砖）工程\" }, { id: 97, text: \"门窗工程\", start_date: \"23-07-2015\", duration: 70, progress: 0.8, open: true, parent: 94, resources: \"门窗工程\" }, { id: 98, text: \"幕墙外装修工程\", start_date: \"23-07-2015\", duration: 70, progress: 0.8, open: true, parent: 94, resources: \"幕墙外装修工程\" }, { id: 99, text: \"II战区2号阵地10#、11#、13#楼\", start_date: \"08-10-2014\", duration: 445, progress: 0.77, open: true, resources: \"II战区2号阵地10#、11#、13#楼\" }, { id: 100, text: \"地下结构工程\", start_date: \"08-10-2014\", duration: 236, progress: 1, open: true, parent: 99, resources: \"地下结构工程\" }, { id: 101, text: \"地下一层结构\", start_date: \"08-10-2014\", duration: 100, progress: 1, open: true, parent: 100, resources: \"地下一层结构\" }, { id: 102, text: \"地下一层夹层结构（+-0）\", start_date: \"01-01-2015\", duration: 135, progress: 1, open: true, parent: 100, resources: \"地下一层夹层结构（+-0）\" }, { id: 103, text: \"地下室外墙防水\", start_date: \"01-05-2015\", duration: 20, progress: 1, open: true, parent: 100, resources: \"地下室外墙防水\" }, { id: 104, text: \"肥槽回填土\", start_date: \"25-04-2015\", duration: 37, progress: 1, open: true, parent: 100, resources: \"肥槽回填土\" }, { id: 105, text: \"主体结构（地上1-5层）\", start_date: \"25-04-2015\", duration: 111, progress: 1, open: true, parent: 99, resources: \"主体结构（地上1-5层）\" }, { id: 106, text: \"主体结构（一层）\", start_date: \"25-04-2015\", duration: 36, progress: 1, open: true, parent: 105, resources: \"主体结构（一层）\" }, { id: 107, text: \"主体结构（二-五层）\", start_date: \"31-05-2015\", duration: 45, progress: 1, open: true, parent: 105, resources: \"主体结构（二-五层）\" }, { id: 108, text: \"二次结构\", start_date: \"30-06-2015\", duration: 45, progress: 1, open: true, parent: 105, resources: \"二次结构\" }, { id: 109, text: \"室内工程\", start_date: \"15-07-2015\", duration: 165, progress: 0.38, open: true, parent: 99, resources: \"室内工程\" }, { id: 110, text: \"内部初装修\", start_date: \"15-07-2015\", duration: 60, progress: 1, open: true, parent: 109, resources: \"内部初装修\" }, { id: 111, text: \"室内精装修\", start_date: \"14-08-2015\", duration: 60, progress: 0.56, open: true, parent: 109, resources: \"室内精装修\" }, { id: 112, text: \"室内水、暖、电及设备安装\", start_date: \"15-07-2015\", duration: 120, progress: 0.53, open: true, parent: 109, resources: \"室内水、暖、电及设备安装\" }, { id: 113, text: \"电梯安装\", start_date: \"14-08-2015\", duration: 90, progress: 0.37, open: true, parent: 109, resources: \"电梯安装\" }, { id: 114, text: \"消防工程\", start_date: \"08-09-2015\", duration: 110, progress: 0.07, open: true, parent: 109, resources: \"消防工程\" }, { id: 115, text: \"弱电工程\", start_date: \"08-09-2015\", duration: 110, progress: 0.07, open: true, parent: 109, resources: \"弱电工程\" }, { id: 116, text: \"室外装修工程\", start_date: \"04-08-2015\", duration: 100, progress: 0.43, open: true, parent: 99, resources: \"室外装修工程\" }, { id: 117, text: \"外保温工程\", start_date: \"04-08-2015\", duration: 45, progress: 0.98, open: true, parent: 116, resources: \"外保温工程\" }, { id: 118, text: \"门窗工程\", start_date: \"14-08-2015\", duration: 90, progress: 0.37, open: true, parent: 116, resources: \"门窗工程\" }, { id: 119, text: \"涂料（瓷砖）工程\", start_date: \"24-08-2015\", duration: 60, progress: 0.39, open: true, parent: 116, resources: \"涂料（瓷砖）工程\" }, { id: 120, text: \"幕墙外装修工程\", start_date: \"14-08-2015\", duration: 90, progress: 0.37, open: true, parent: 116, resources: \"幕墙外装修工程\" }, { id: 121, text: \"I、II战区2号车库工程\", start_date: \"21-04-2015\", duration: 255, progress: 0.58, open: true, resources: \"I、II战区2号车库工程\" }, { id: 122, text: \"车库室外工程\", start_date: \"21-04-2015\", duration: 1, progress: 1, open: true, parent: 121, resources: \"车库室外工程\" }, { id: 123, text: \"车库顶板工程（防水等）\", start_date: \"20-05-2015\", duration: 120, progress: 1, open: true, parent: 122, resources: \"车库顶板工程（防水等）\" }, { id: 124, text: \"车库顶板回填土\", start_date: \"04-06-2015\", duration: 150, progress: 0.7, open: true, parent: 122, resources: \"车库顶板回填土\" }, { id: 125, text: \"室内工程\", start_date: \"15-06-2015\", duration: 200, progress: 0.47, open: true, parent: 121, resources: \"室内工程\" }, { id: 126, text: \"二次结构\", start_date: \"15-06-2015\", duration: 90, progress: 1, open: true, parent: 125, resources: \"二次结构\" }, { id: 127, text: \"内部初装修\", start_date: \"15-07-2015\", duration: 90, progress: 0.71, open: true, parent: 125, resources: \"内部初装修\" }, { id: 128, text: \"室内水、暖、电及设备安装\", start_date: \"15-06-2015\", duration: 200, progress: 0.47, open: true, parent: 125, resources: \"室内水、暖、电及设备安装\" }, { id: 129, text: \"消防工程\", start_date: \"15-06-2015\", duration: 200, progress: 0.47, open: true, parent: 125, resources: \"消防工程\" }, { id: 130, text: \"弱电工程\", start_date: \"15-06-2015\", duration: 200, progress: 0.47, open: true, parent: 125, resources: \"弱电工程\" }, { id: 131, text: \"四、III战区1 #—9#楼工程计划\", start_date: \"18-08-2014\", duration: 485, progress: 0.81, open: true, resources: \"四、III战区1 #—9#楼工程计划\" }, { id: 132, text: \"III战区1号阵地7#-9#楼（样板楼工程）\", start_date: \"10-04-2015\", duration: 174, progress: 0.92, open: true, resources: \"III战区1号阵地7#-9#楼（样板楼工程）\" }, { id: 133, text: \"主体结构（地上1-4层）\", start_date: \"10-04-2015\", duration: 75, progress: 1, open: true, parent: 132, resources: \"主体结构（地上1-4层）\" }, { id: 134, text: \"7#、8#楼主体结构（二-四层）\", start_date: \"10-04-2015\", duration: 26, progress: 1, open: true, parent: 133, resources: \"7#、8#楼主体结构（二-四层）\" }, { id: 135, text: \"7#-9#楼二次结构\", start_date: \"10-05-2015\", duration: 45, progress: 1, open: true, parent: 133, resources: \"7#-9#楼二次结构\" }, { id: 136, text: \"室内工程\", start_date: \"10-05-2015\", duration: 144, progress: 0.9, open: true, parent: 132, resources: \"室内工程\" }, { id: 137, text: \"内部初装修\", start_date: \"25-05-2015\", duration: 60, progress: 1, open: true, parent: 136, resources: \"内部初装修\" }, { id: 138, text: \"室内精装修\", start_date: \"24-06-2015\", duration: 90, progress: 0.94, open: true, parent: 136, resources: \"室内精装修\" }, { id: 139, text: \"室内水、暖、电及设备安装\", start_date: \"10-05-2015\", duration: 144, progress: 0.9, open: true, parent: 136, resources: \"室内水、暖、电及设备安装\" }, { id: 140, text: \"电梯安装\", start_date: \"01-09-2015\", duration: 30, progress: 0.52, open: true, parent: 136, resources: \"电梯安装\" }, { id: 141, text: \"消防工程\", start_date: \"24-06-2015\", duration: 99, progress: 0.86, open: true, parent: 136, resources: \"消防工程\" }, { id: 142, text: \"弱电工程\", start_date: \"24-07-2015\", duration: 69, progress: 0.79, open: true, parent: 136, resources: \"弱电工程\" }, { id: 143, text: \"室外装修工程\", start_date: \"14-06-2015\", duration: 109, progress: 0.87, open: true, parent: 132, resources: \"室外装修工程\" }, { id: 144, text: \"外保温工程\", start_date: \"14-06-2015\", duration: 45, progress: 1, open: true, parent: 143, resources: \"外保温工程\" }, { id: 145, text: \"门窗工程\", start_date: \"24-06-2015\", duration: 99, progress: 0.86, open: true, parent: 143, resources: \"门窗工程\" }, { id: 146, text: \"涂料（瓷砖）工程\", start_date: \"22-07-2015\", duration: 71, progress: 0.8, open: true, parent: 143, resources: \"涂料（瓷砖）工程\" }, { id: 147, text: \"幕墙外装修工程\", start_date: \"31-07-2015\", duration: 60, progress: 0.8, open: true, parent: 143, resources: \"幕墙外装修工程\" }, { id: 148, text: \"III战区2号阵地1#-6#楼\", start_date: \"25-04-2015\", duration: 235, progress: 0.62, open: true, resources: \"III战区2号阵地1#-6#楼\" }, { id: 149, text: \"主体结构（地上1-4层）\", start_date: \"25-04-2015\", duration: 95, progress: 1, open: true, parent: 148, resources: \"主体结构（地上1-4层）\" }, { id: 150, text: \"1#-3#楼主体结构（1-4层）\", start_date: \"25-04-2015\", duration: 50, progress: 1, open: true, parent: 149, resources: \"1#-3#楼主体结构（1-4层）\" }, { id: 151, text: \"4#-6#楼主体结构（1-4层）\", start_date: \"25-04-2015\", duration: 50, progress: 1, open: true, parent: 149, resources: \"4#-6#楼主体结构（1-4层）\" }, { id: 152, text: \"1#-3#楼二次结构（1-4层）\", start_date: \"14-06-2015\", duration: 45, progress: 1, open: true, parent: 149, resources: \"1#-3#楼二次结构（1-4层）\" }, { id: 153, text: \"4#-6#楼二次结构（1-4层）\", start_date: \"14-06-2015\", duration: 45, progress: 1, open: true, parent: 149, resources: \"4#-6#楼二次结构（1-4层）\" }, { id: 154, text: \"室内工程\", start_date: \"29-07-2015\", duration: 140, progress: 0.35, open: true, parent: 148, resources: \"室内工程\" }, { id: 155, text: \"内部初装修\", start_date: \"29-07-2015\", duration: 50, progress: 1, open: true, parent: 154, resources: \"内部初装修\" }, { id: 156, text: \"室内精装修\", start_date: \"13-08-2015\", duration: 60, progress: 0.58, open: true, parent: 154, resources: \"室内精装修\" }, { id: 157, text: \"室内水、暖、电及设备安装\", start_date: \"29-07-2015\", duration: 120, progress: 0.41, open: true, parent: 154, resources: \"室内水、暖、电及设备安装\" }, { id: 158, text: \"电梯安装\", start_date: \"17-09-2015\", duration: 90, progress: 0, open: true, parent: 154, resources: \"电梯安装\" }, { id: 159, text: \"消防工程\", start_date: \"29-07-2015\", duration: 120, progress: 0.41, open: true, parent: 154, resources: \"消防工程\" }, { id: 160, text: \"弱电工程\", start_date: \"29-07-2015\", duration: 120, progress: 0.41, open: true, parent: 154, resources: \"弱电工程\" }, { id: 161, text: \"室外装修工程\", start_date: \"19-07-2015\", duration: 120, progress: 0.5, open: true, parent: 148, resources: \"室外装修工程\" }, { id: 162, text: \"外保温工程\", start_date: \"29-07-2015\", duration: 45, progress: 1, open: true, parent: 161, resources: \"外保温工程\" }, { id: 163, text: \"门窗工程\", start_date: \"19-07-2015\", duration: 120, progress: 0.5, open: true, parent: 161, resources: \"门窗工程\" }, { id: 164, text: \"涂料（瓷砖）工程\", start_date: \"12-09-2015\", duration: 65, progress: 0.06, open: true, parent: 161, resources: \"涂料（瓷砖）工程\" }, { id: 165, text: \"幕墙外装修工程\", start_date: \"19-07-2015\", duration: 120, progress: 0.5, open: true, parent: 161, resources: \"幕墙外装修工程\" }, { id: 166, text: \"III战区1号车库工程\", start_date: \"15-06-2015\", duration: 165, progress: 0.57, open: true, resources: \"III战区1号车库工程\" }, { id: 167, text: \"车库室外工程\", start_date: \"30-06-2015\", duration: 80, progress: 0.99, open: true, parent: 166, resources: \"车库室外工程\" }, { id: 168, text: \"车库顶板工程（防水等）\", start_date: \"30-06-2015\", duration: 45, progress: 1, open: true, parent: 167, resources: \"车库顶板工程（防水等）\" }, { id: 169, text: \"车库顶板回填土\", start_date: \"20-07-2015\", duration: 60, progress: 0.98, open: true, parent: 167, resources: \"车库顶板回填土\" }, { id: 170, text: \"室内工程\", start_date: \"15-06-2015\", duration: 135, progress: 0.69, open: true, parent: 166, resources: \"室内工程\" }, { id: 171, text: \"二次结构\", start_date: \"15-06-2015\", duration: 45, progress: 1, open: true, parent: 170, resources: \"二次结构\" }, { id: 172, text: \"内部初装修\", start_date: \"05-07-2015\", duration: 60, progress: 1, open: true, parent: 170, resources: \"内部初装修\" }, { id: 173, text: \"室内水、暖、电及设备安装\", start_date: \"15-06-2015\", duration: 120, progress: 0.78, open: true, parent: 170, resources: \"室内水、暖、电及设备安装\" }, { id: 174, text: \"消防工程\", start_date: \"30-06-2015\", duration: 120, progress: 0.66, open: true, parent: 170, resources: \"消防工程\" }, { id: 175, text: \"弱电工程\", start_date: \"30-07-2015\", duration: 120, progress: 0.4, open: true, parent: 170, resources: \"弱电工程\" }, { id: 176, text: \"五、室外市政园林景观工程\", start_date: \"01-05-2015\", duration: 381, progress: 0.36, open: true, resources: \"五、室外市政园林景观工程\" }, { id: 177, text: \"室外市政工程\", start_date: \"01-05-2015\", duration: 260, progress: 0.53, open: true, parent: 176, resources: \"室外市政工程\" }, { id: 178, text: \"9#楼汽车坡道（含回填）\", start_date: \"01-05-2015\", duration: 61, progress: 1, open: true, parent: 177, resources: \"9#楼汽车坡道（含回填）\" }, { id: 179, text: \"7-9#楼、12#楼样板示范区市政管线\", start_date: \"11-07-2015\", duration: 82, progress: 0.83, open: true, parent: 177, resources: \"7-9#楼、12#楼样板示范区市政管线\" }, { id: 180, text: \"其他区域市政管线\", start_date: \"18-09-2015\", duration: 120, progress: 0, open: true, parent: 177, resources: \"其他区域市政管线\" }, { id: 181, text: \"园林景观工程\", start_date: \"10-08-2015\", duration: 280, progress: 0.13, open: true, parent: 176, resources: \"园林景观工程\" }, { id: 182, text: \"7-9#楼、12#楼样板示范区园林景观\", start_date: \"10-08-2015\", duration: 52, progress: 0.73, open: true, parent: 181, resources: \"7-9#楼、12#楼样板示范区园林景观\" }, { id: 183, text: \"其他区园林景观\", start_date: \"17-12-2015\", duration: 151, progress: 0, open: true, parent: 181, resources: \"其他区园林景观\" }, { id: 184, text: \"六、竣工验收并取得备案表\", start_date: \"01-12-2015\", duration: 197, progress: 0, open: true, resources: \"六、竣工验收并取得备案表\" }, { id: 185, text: \"档案验收\", start_date: \"01-01-2016\", duration: 30, progress: 0, open: true, parent: 184, resources: \"档案验收\" }, { id: 186, text: \"人防工程验收\", start_date: \"01-01-2016\", duration: 31, progress: 0, open: true, parent: 184, resources: \"人防工程验收\" }, { id: 187, text: \"电梯验收\", start_date: \"01-12-2015\", duration: 30, progress: 0, open: true, parent: 184, resources: \"电梯验收\" }, { id: 188, text: \"消防验收\", start_date: \"01-01-2016\", duration: 30, progress: 0, open: true, parent: 184, resources: \"消防验收\" }, { id: 189, text: \"规划验收\", start_date: \"15-05-2016\", duration: 20, progress: 0, open: true, parent: 184, resources: \"规划验收\" }, { id: 190, text: \"防雷验收\", start_date: \"01-03-2016\", duration: 20, progress: 0, open: true, parent: 184, resources: \"防雷验收\" }, { id: 191, text: \"五方验收\", start_date: \"16-05-2016\", duration: 15, progress: 0, open: true, parent: 184, resources: \"五方验收\" }, { id: 192, text: \"竣工验收及取得验收备案表\", start_date: \"31-05-2016\", duration: 15, progress: 0, open: true, parent: 184, resources: \"竣工验收及取得验收备案表\" }, { id: 193, text: \"七、交房或开业\", start_date: \"15-06-2016\", duration: 17, progress: 0, open: true, resources: \"七、交房或开业\" }, { id: 194, text: \"交房或开业\", start_date: \"15-06-2016\", duration: 17, progress: 0, open: true, parent: 193, resources: \"交房或开业\"}], links: [{ id: 1, source: 2, target: 3, type: \"1\" }, { id: 2, source: 3, target: 5, type: \"0\" }, { id: 3, source: 14, target: 15, type: \"1\" }, { id: 4, source: 14, target: 16, type: \"0\" }, { id: 5, source: 16, target: 17, type: \"0\" }, { id: 6, source: 17, target: 18, type: \"0\" }, { id: 7, source: 18, target: 20, type: \"0\" }, { id: 8, source: 20, target: 21, type: \"0\" }, { id: 9, source: 21, target: 22, type: \"0\" }, { id: 10, source: 20, target: 24, type: \"0\" }, { id: 11, source: 24, target: 25, type: \"0\" }, { id: 12, source: 25, target: 26, type: \"0\" }, { id: 13, source: 26, target: 27, type: \"0\" }, { id: 14, source: 26, target: 29, type: \"0\" }, { id: 15, source: 29, target: 30, type: \"1\" }, { id: 16, source: 30, target: 31, type: \"0\" }, { id: 17, source: 29, target: 32, type: \"1\" }, { id: 18, source: 29, target: 33, type: \"0\" }, { id: 19, source: 32, target: 34, type: \"1\" }, { id: 20, source: 34, target: 35, type: \"1\" }, { id: 21, source: 29, target: 37, type: \"0\" }, { id: 22, source: 40, target: 41, type: \"0\" }, { id: 23, source: 41, target: 42, type: \"0\" }, { id: 24, source: 40, target: 44, type: \"0\" }, { id: 25, source: 44, target: 45, type: \"0\" }, { id: 26, source: 45, target: 46, type: \"0\" }, { id: 27, source: 46, target: 47, type: \"0\" }, { id: 28, source: 47, target: 49, type: \"1\" }, { id: 29, source: 46, target: 55, type: \"0\" }, { id: 30, source: 47, target: 57, type: \"0\" }, { id: 31, source: 57, target: 58, type: \"0\" }, { id: 32, source: 47, target: 59, type: \"0\" }, { id: 33, source: 62, target: 64, type: \"0\" }, { id: 34, source: 64, target: 65, type: \"0\" }, { id: 35, source: 65, target: 66, type: \"0\" }, { id: 36, source: 66, target: 68, type: \"0\" }, { id: 37, source: 68, target: 69, type: \"0\" }, { id: 38, source: 66, target: 70, type: \"0\" }, { id: 39, source: 66, target: 71, type: \"0\" }, { id: 40, source: 66, target: 72, type: \"0\" }, { id: 41, source: 66, target: 73, type: \"0\" }, { id: 42, source: 66, target: 75, type: \"0\" }, { id: 43, source: 82, target: 84, type: \"0\" }, { id: 44, source: 84, target: 85, type: \"0\" }, { id: 45, source: 85, target: 86, type: \"0\" }, { id: 46, source: 86, target: 88, type: \"0\" }, { id: 47, source: 88, target: 89, type: \"0\" }, { id: 48, source: 85, target: 90, type: \"0\" }, { id: 49, source: 86, target: 91, type: \"0\" }, { id: 50, source: 85, target: 92, type: \"0\" }, { id: 51, source: 85, target: 93, type: \"0\" }, { id: 52, source: 86, target: 95, type: \"0\" }, { id: 53, source: 95, target: 96, type: \"0\" }, { id: 54, source: 86, target: 97, type: \"0\" }, { id: 55, source: 86, target: 98, type: \"0\" }, { id: 56, source: 101, target: 102, type: \"0\" }, { id: 57, source: 102, target: 103, type: \"0\" }, { id: 58, source: 106, target: 107, type: \"0\" }, { id: 59, source: 107, target: 108, type: \"0\" }, { id: 60, source: 108, target: 110, type: \"1\" }, { id: 61, source: 110, target: 111, type: \"1\" }, { id: 62, source: 107, target: 112, type: \"0\" }, { id: 63, source: 108, target: 113, type: \"0\" }, { id: 64, source: 108, target: 117, type: \"0\" }, { id: 65, source: 108, target: 118, type: \"0\" }, { id: 66, source: 108, target: 119, type: \"0\" }, { id: 67, source: 108, target: 120, type: \"0\" }, { id: 68, source: 123, target: 124, type: \"1\" }, { id: 69, source: 126, target: 127, type: \"1\" }, { id: 70, source: 126, target: 128, type: \"1\" }, { id: 71, source: 135, target: 137, type: \"1\" }, { id: 72, source: 137, target: 138, type: \"1\" }, { id: 73, source: 135, target: 139, type: \"1\" }, { id: 74, source: 135, target: 141, type: \"0\" }, { id: 75, source: 135, target: 142, type: \"0\" }, { id: 76, source: 135, target: 144, type: \"0\" }, { id: 77, source: 135, target: 145, type: \"0\" }, { id: 78, source: 144, target: 146, type: \"0\" }, { id: 79, source: 145, target: 147, type: \"1\" }, { id: 80, source: 150, target: 152, type: \"0\" }, { id: 81, source: 151, target: 153, type: \"0\" }, { id: 82, source: 152, target: 155, type: \"0\" }, { id: 83, source: 155, target: 156, type: \"1\" }, { id: 84, source: 152, target: 157, type: \"0\" }, { id: 85, source: 155, target: 158, type: \"0\" }, { id: 86, source: 155, target: 159, type: \"1\" }, { id: 87, source: 155, target: 160, type: \"1\" }, { id: 88, source: 152, target: 162, type: \"0\" }, { id: 89, source: 152, target: 163, type: \"0\" }, { id: 90, source: 162, target: 164, type: \"0\" }, { id: 91, source: 163, target: 165, type: \"1\" }, { id: 92, source: 168, target: 169, type: \"1\" }, { id: 93, source: 171, target: 172, type: \"1\" }, { id: 94, source: 171, target: 173, type: \"1\" }, { id: 95, source: 173, target: 174, type: \"1\" }, { id: 96, source: 174, target: 175, type: \"1\" }, { id: 97, source: 178, target: 179, type: \"0\" }, { id: 98, source: 169, target: 180, type: \"0\" }, { id: 99, source: 179, target: 182, type: \"1\" }, { id: 100, source: 180, target: 183, type: \"0\" }, { id: 101, source: 183, target: 191, type: \"0\" }, { id: 102, source: 191, target: 192, type: \"0\" }, { id: 103, source: 192, target: 193, type: \"0\" }, { id: 104, source: 192, target: 194, type: \"0\"}] }"
+            //将字符串转为JSON对象
+            users_data = eval('(' + users_data + ')');
+        }
+        //开始加载事件
+        gantt.attachEvent("onLoadStart", function () {
+           
+        });
+        //加载数据结束
+        gantt.attachEvent("onLoadEnd", function () {
+            
+        });
+
+        //当前行点击事件，根据点击索引，进行展示
+        gantt.attachEvent("onTaskRowClick", function (id, row) {
+            //alert("ok");
+            //alert(row);
+            //alert(id);
+            onSlide(1, id - 1);
+            if (id - 1 == 0) {
+                //执行动画
+                animation();
+            }
+        });
+
+        gantt.config.columns = [
+            { name: "text", label: "名称", tree: true, width: '*' },
+            { name: "start_date", label: "开始时间", align: "center" },
+            { name: "duration", label: "工期(天)", align: "center" }
+        ];
+//        gantt.config.scale_unit = "month"; //X轴以天为单位day,month,week
+//        //gantt.config.step = 10;  //间隔5天
+//        gantt.config.date_scale = "%m,%Y"; //"Week #%W"; //"%F, %d";
+//        gantt.config.scale_height = 50;
+        //设置子标题样式
+        setScal(1);
+
+
+        gantt.config.row_height = 25;  //设置行高度
+        gantt.config.details_on_create = true;
+        gantt.config.readonly = true; //不让编辑
+        
+        gantt.init("dhtmlxgantt_here");
+
+        gantt.parse(users_data);
+        //gantt.load("temp/data.xml","xml");
+        //gantt.load("temp/data.json");
+
+	</script>
+
+    <object id="sgworld" classid="CLSID:3a4f9199-65a8-11d5-85c1-0001023952c1"></object>
+</body>
+</html>

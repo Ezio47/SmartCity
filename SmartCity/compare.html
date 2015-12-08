@@ -1,0 +1,658 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>建设项目施工进度和计划动态对比</title>
+    <script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+    <link href="jquery-ui-1.11.4.custom/jquery-ui.css" rel="stylesheet" />
+    <link href="css/two.css" rel="stylesheet" />
+    <script type="text/javascript" src="jquery-ui-1.11.4.custom/jquery-ui.js"></script>
+    <style type="text/css">
+        html, body
+        {
+            width: 100%;
+            height: 100%;
+            background-color: #3B7EBD;
+        }
+
+        table
+        {
+            border-collapse: collapse;
+        }
+
+        table, td, th
+        {
+            /*font-size:12px;*/
+            border: 1px solid black;
+        }
+    </style>
+    <script type="text/javascript" src="js/util.js"></script>
+    <script type="text/javascript">
+        var TEX1, TEX2 = null;
+        var globe1;
+        var globe2;
+        var added = -1;
+        var loaded = 0;
+        // var flyPath ="D:\\中关村医疗园kit\\Default.fly";
+        var flyPath = "D:\\医疗器械园\\planFly.fly";
+        //var datas = {
+        //    "1-3号建筑": {
+        //        type: ["外壳", "内墙", "楼梯", "楼板", "顶楼板"],
+        //        pathppre: "模型\\1-3号建筑\\1-3号",
+        //        pathnex: "-三维视图",
+        //        arrayObj: [],
+        //        dates: [
+        //            { id: 1, start_date: "2013-1-10", end_date: "2013-8-10", planValue: 20, realValue: 15 },
+        //            { id: 2, start_date: "2013-8-10", end_date: "2014-3-5", planValue: 40, realValue: 30 },
+        //            { id: 3, start_date: "2014-3-5", end_date: "2014-8-5", planValue: 60, realValue: 45 },
+        //            { id: 4, start_date: "2014-8-5", end_date: "2015-1-5", planValue: 80, realValue: 90 },
+        //            { id: 5, start_date: "2015-1-5", end_date: "2015-8-5", planValue: 100, realValue: 100 }
+        //        ]
+        //    },
+        //    "4-6号建筑": {
+        //        type: ["外壳", "内墙", "楼梯", "楼板", "顶楼板"],
+        //        pathppre: "模型\\4-6号建筑\\4-6号",
+        //        pathnex: "-三维视图",
+        //        arrayObj: [],
+        //        dates: [
+        //            { id: 1, start_date: "2013-1-10", end_date: "2013-8-10", planValue: 20, realValue: 15 },
+        //            { id: 2, start_date: "2013-8-10", end_date: "2014-3-5", planValue: 40, realValue: 30 },
+        //            { id: 3, start_date: "2014-3-5", end_date: "2014-8-5", planValue: 60, realValue: 45 },
+        //            { id: 4, start_date: "2014-8-5", end_date: "2015-1-5", planValue: 80, realValue: 90 },
+        //            { id: 5, start_date: "2015-1-5", end_date: "2015-8-5", planValue: 100, realValue: 100 }
+        //        ]
+        //    },
+        //    "14号建筑": {
+        //        type: ["一层", "二层", "三层", "四层", "五层","六层","房顶"],
+        //        pathppre: "模型\\14号建筑\\14#",
+        //        pathnex: "-三维视图-{三维}",
+        //        arrayObj: [],
+        //        dates: [
+        //            { id: 1, start_date: "2013-1-10", end_date: "2013-8-10", planValue: 10, realValue: 5 },
+        //            { id: 2, start_date: "2013-8-10", end_date: "2014-3-5", planValue: 25, realValue: 15 },
+        //            { id: 3, start_date: "2014-3-5", end_date: "2014-8-5", planValue: 40, realValue: 20 },
+        //            { id: 4, start_date: "2014-8-5", end_date: "2015-1-5", planValue: 55, realValue: 50 },
+        //            { id: 5, start_date: "2015-1-5", end_date: "2015-6-5", planValue: 70, realValue: 65 },
+        //        { id: 6, start_date: "2015-6-5", end_date: "2015-8-5", planValue: 85, realValue: 75 },
+        //            { id: 7, start_date: "2015-8-5", end_date: "2015-10-5", planValue: 100, realValue: 88}
+        //        ]
+        //    },
+        //    "16号建筑_未分层": {
+        //        type: ["地下室", "一层", "二层", "三层", "四层", "五层", "六层", "七层", "八层", "九层", "十层", "十一层"],
+        //        pathppre: "模型\\16号建筑_未分层\\16#",
+        //        pathnex: "-三维视图-{三维}",
+        //        arrayObj: [],
+        //        dates: [
+        //            { id: 1, start_date: "2013-1-10", end_date: "2013-2-10", planValue: 8, realValue: 2 },
+        //            { id: 2, start_date: "2013-2-10", end_date: "2013-7-5", planValue: 16, realValue: 20 },
+        //            { id: 3, start_date: "2013-7-5", end_date: "2014-1-5", planValue: 35, realValue: 27 },
+        //            { id: 4, start_date: "2014-1-5", end_date: "2014-6-5", planValue: 40, realValue: 30 },
+        //            { id: 5, start_date: "2014-6-5", end_date: "2014-8-5", planValue: 45, realValue: 33 },
+        //        { id:6, start_date: "2014-8-5", end_date: "2014-11-10", planValue: 50, realValue: 38 },
+        //{ id: 7, start_date: "2014-11-10", end_date: "2014-12-30", planValue: 55, realValue: 45},
+        //{ id: 8, start_date: "2014-12-30", end_date: "2015-2-5", planValue: 60, realValue: 60 },
+        //{ id: 9, start_date: "2015-1-5", end_date: "2015-2-5", planValue: 72, realValue: 77 },
+        //{ id: 10, start_date: "2015-2-5", end_date: "2015-3-10", planValue: 80, realValue: 85 },
+        // { id: 11, start_date: "2015-3-10", end_date: "2015-6-10", planValue: 95, realValue: 90 },
+        //            { id: 12, start_date: "2015-6-10", end_date: "2015-8-5", planValue: 100, realValue: 100 }
+
+        //        ]
+        //    },
+        //    "15号楼": {
+        //        type: ["建筑剪力墙", "结构板", "结构柱", "结构梁", "外幕墙"],
+        //        pathppre: "模型\\15号建筑\\15#",
+        //        pathnex: "-三维视图-{三维}",
+        //        arrayObj: [],
+        //        dates: [
+        //            { id: 1, start_date: "2013-1-10", end_date: "2013-8-10", planValue: 20, realValue: 6 },
+        //            { id: 2, start_date: "2013-8-10", end_date: "2014-3-5", planValue: 40, realValue: 30 },
+        //            { id: 3, start_date: "2014-3-5", end_date: "2014-8-5", planValue: 60, realValue: 45 },
+        //            { id: 4, start_date: "2014-8-5", end_date: "2015-1-5", planValue: 80, realValue: 90 },
+        //            { id: 5, start_date: "2015-1-5", end_date: "2015-8-5", planValue: 100, realValue: 100 }
+        //        ]
+        //    }
+        //};
+
+        var datas = {
+            "15号建筑": {
+                type: ["结构\\F1", "结构\\F2", "结构\\F3", "建筑\\QT", "喷淋\\F1", "喷淋\\F2", "喷淋\\F3",
+                  "暖通\\F1", "暖通\\F2", "暖通\\F3", "结构\\WD"],
+                pathppre: "15#\\",
+                pathnex: "",
+                arrayObj: [],
+                dates: [
+                   { id: 1, start_date: "2015-05-16", end_date: "2015-05-31", planValue: 8, realValue: 2 },
+                   { id: 2, start_date: "2015-05-31", end_date: "2015-06-15", planValue: 20, realValue: 20 },
+                   { id: 3, start_date: "2015-06-15", end_date: "2015-06-23", planValue: 35, realValue: 27 },
+                   { id: 4, start_date: "2015-06-23", end_date: "2015-06-25", planValue: 40, realValue: 30 },
+                   { id: 5, start_date: "2015-06-25", end_date: "2015-06-28", planValue: 45, realValue: 33 },
+               { id: 6, start_date: "2015-06-28", end_date: "2015-07-01", planValue: 50, realValue: 38 },
+       { id: 7, start_date: "2015-07-01", end_date: "2015-07-05", planValue: 55, realValue: 45 },
+       { id: 8, start_date: "2015-07-05", end_date: "2015-07-15", planValue: 70, realValue: 60 },
+       { id: 9, start_date: "2015-07-15", end_date: "2015-07-28", planValue: 80, realValue: 77 },
+       { id: 10, start_date: "2015-07-28", end_date: "2015-08-06", planValue: 90, realValue: 85 },
+         { id: 11, start_date: "2015-08-06", end_date: "2015-08-18", planValue: 100, realValue: 100 }
+
+                ]
+            }
+        };
+        var currentBuild;
+        var planValueBar, planValueLabel, realValueBar, realValueLabel;
+
+        function InitMyTEX() {
+            TEX1 = window.document.getElementById("TEX1");
+            TEX2 = window.document.getElementById("TEX2");
+
+            // TEX1.width = window.document.documentElement.clientWidth / 2;
+            //  TEX1.height = window.document.documentElement.clientHeight - 400;
+
+            //  TEX2.width = window.document.documentElement.clientWidth / 2;
+            //  TEX2.height = window.document.documentElement.clientHeight - 400;
+            //   TEX2.style.left = window.document.documentElement.clientWidth / 2;
+            TEX1.width = "100%";
+            TEX1.height = 600;
+
+            TEX2.width = "100%";
+            TEX2.height = 600;;
+            //  TEX2.style.left = TEX1.width + 20;
+
+            //TEX1 = CreateTEX1();
+            globe1 = TEX1.CreateInstance("TerraExplorerX.SGWorld66");
+            globe2 = TEX2.CreateInstance("TerraExplorerX.SGWorld66");
+
+
+            globe1.AttachEvent("OnLoadFinished", OnLoadFinished);
+            globe2.AttachEvent("OnLoadFinished", OnLoadFinished);
+
+            globe1.Open(flyPath);
+            globe2.Open(flyPath);
+
+        }
+
+        function OnLoadFinished() {
+            loaded++;
+            if (loaded === 2) {
+                addGeoToSelect();//添加地物选择
+
+                // showCompare("1-3号建筑");
+
+                showCompare("15号建筑");
+
+                // hideLayers();
+            }
+        }
+
+        function Resize() {
+            //  TEX1.width = window.document.documentElement.clientWidth / 2;
+            //   TEX1.height = window.document.documentElement.clientHeight - 400;
+
+            //  TEX2.width = window.document.documentElement.clientWidth / 2;
+            //  TEX2.height = window.document.documentElement.clientHeight - 400;
+            //  TEX2.style.left = window.document.documentElement.clientWidth / 2;
+            TEX1.width = "100%";
+            TEX1.height = 600;
+
+            TEX2.width = "100%";
+            TEX2.height = 600;
+        }
+
+        //添加要素
+        function ini_my(modedir, data) {
+            var ml = globe1.ProjectTree.GetObject(globe1.ProjectTree.FindItem(modedir));
+            added++;
+            if (added === 0) {
+                globe1.Navigate.FlyTo(ml);
+                globe2.Navigate.FlyTo(ml);
+            }
+            for (var i = 0; i < data.type.length; i++) {
+                for (var j = 0; j < ml.FeatureLayers.Count; j++) {
+                    var name = ml.FeatureLayers.Item(j).TreeItem.Name;
+                    if (data.type[i].indexOf(name) >= 0) {
+                        data.arrayObj.push(ml.FeatureLayers.Item(j));
+                        break;
+                    }
+                }
+            }
+        }
+        //初始化三维多窗口
+        function CreateTEX(id) {
+            var myid = "TEX" + id;
+            var obj = $(myid);
+            if (obj == null) {
+                obj = document.createElement('object');
+                document.body.appendChild(obj);
+                obj.name = myid;
+                obj.id = myid;
+                obj.classid = "CLSID:3a4f9196-65a8-11d5-85c1-0001023952c1";
+                obj.width = "400px";
+                obj.height = "400px";
+            }
+            return obj;
+        }
+
+        
+        function init_my_Build() {
+            var data = datas[currentBuild];
+            var array = data.type;
+            added = -1;
+            for (var i = 0; i < array.length; i++) {
+                var path = data.pathppre + array[i] + data.pathnex;
+                ini_my(path, data);//获取地物数据
+            }
+        }
+
+        //模型路径
+        function findDir(index) {
+            var data = datas[currentBuild];
+            var array = data.type;
+
+            var path = data.pathppre + array[index] + data.pathnex;
+            return path;
+        }
+
+  
+        //显示要素
+        function showFeature(pid) {
+            var arrayObj = datas[currentBuild].arrayObj;
+            var len = arrayObj.length;
+
+            var index = parseInt(pid);
+            for (var i = 0; i < len; i++) {
+                if (index === 0) {
+                    showModel(2, "15#", false);
+                    showModel(1, "15#", false);
+
+                    globe1.ProjectTree.SetVisibility(arrayObj[i].ID, false);
+                    globe2.ProjectTree.SetVisibility(arrayObj[i].ID, false);
+                } else {
+                    showModel(2, "15#建筑", false);
+                    showModel(1, "15#建筑", false);
+
+                    changeFeaturesVisibility();
+                    
+                    break;
+                }
+            }
+        }
+
+        //控制图层可见性
+        function showChecked(pid) {
+            var len = datas[currentBuild].type.length;
+            var index = parseInt(pid);
+            for (var i = 0; i < len; i++) {
+                if (index === 0) {
+                    //隐藏所有图层
+                    showModel(2, "15#", false);
+                    showModel(1, "15#", false);
+                    showModel(2, "15#建筑", false);
+                    showModel(1, "15#建筑", false);
+                } else {
+                   
+                    showModel(2, "15#建筑", false);
+                    showModel(1, "15#建筑", false);
+
+                    changCheckedofTree();
+                    break;
+                }
+            }
+        }
+
+        //控制地物可见性
+        function showModel(index, dir, flag) {
+            if (index === 1) {
+                var item1 = globe1.ProjectTree.FindItem(dir);
+                try {
+                    globe1.ProjectTree.SetVisibility(item1, flag);
+                } catch (e1) {
+                    exportLog(e1);
+                }
+
+            }
+            if (index === 2) {
+                var item2 = globe1.ProjectTree.FindItem(dir);
+                try {
+                    globe2.ProjectTree.SetVisibility(item2, flag);
+                } catch (e2) {
+                    exportLog(e2);
+                }
+            }
+        }
+
+        //控制三维信息树的图层可见性
+        function changCheckedofTree() {
+            var pidx = findProgress(planValueBar.progressbar("value"));
+            var ridx = findProgress(realValueBar.progressbar("value"));
+            checkTree(1, pidx);
+            checkTree(2, ridx);
+        }
+        //修改tree
+        function checkTree(type, max) {
+            var l = datas[currentBuild].type.length;
+            if (max === l) {
+                showModel(type, "15#建筑", true);
+            }
+            for (var i = 0; i < l; i++) {
+                if (i < max) {
+                    showModel(type, findDir(i), true);
+
+                } else {
+                    showModel(type, findDir(i), false);
+                }
+            }
+        }
+
+//控制要素的可见性
+        function changeFeaturesVisibility() {
+            var pidx = findProgress(planValueBar.progressbar("value"));
+            var ridx = findProgress(realValueBar.progressbar("value"));
+            var arrayObj = datas[currentBuild].arrayObj;
+            var l = arrayObj.length;
+            for (var i = 0; i < pidx; i++) {
+                if (globe1.ProjectTree.GetVisibility(arrayObj[i].ID) === 0) {
+                    globe1.ProjectTree.SetVisibility(arrayObj[i].ID, true);
+                }
+                if (pidx === l) {
+                    showModel(1, "15#建筑", true);
+                }
+            }
+            for (var k = pidx; k < l; k++) {
+                if (globe1.ProjectTree.GetVisibility(arrayObj[k].ID) !== 0) {
+                    globe1.ProjectTree.SetVisibility(arrayObj[k].ID, false);
+                }
+            }
+            for (var j = 0; j < ridx; j++) {
+                if (globe2.ProjectTree.GetVisibility(arrayObj[j].ID) === 0) {
+                    globe2.ProjectTree.SetVisibility(arrayObj[j].ID, true);
+                }
+                if (ridx === l) {;
+                    showModel(2, "15#建筑", true);
+                }
+            }
+            for (var n = ridx; n < l; n++) {
+                if (globe2.ProjectTree.GetVisibility(arrayObj[n].ID) !== 0) {
+                    globe2.ProjectTree.SetVisibility(arrayObj[n].ID, false);
+                }
+            }
+
+        }
+
+        //进度条值
+        function findProgress(value) {
+            // var arrayObj = datas[currentBuild].arrayObj;//要素对象
+            //  var len = arrayObj.length;
+
+            var len = datas[currentBuild].type.length;//图层路径对象
+            var index = Math.floor(value / 100 * len) + 1;
+            var val = index > len ? len : index;
+            return val;
+
+        }
+
+        //更新时间进度控件
+        //function updateDateBar() {
+        //    var $dateBar = $("#dateBar");
+        //    $dateBar.empty();//清空节点
+        //    var dates = datas[currentBuild].dates;
+        //    var len = dates.length;
+        //    for (var i = 0; i < len; i++) {
+        //        var $button = $('<button id="' + i + 'datePros" name="' + dates[i].start_date + '" class="dateUnselected">' + dates[i].start_date + '</button>');
+        //        $dateBar.append($button);
+        //    }
+        //    var $lastButton = $('<button id="' + len + 'datePros" name="' + dates[len - 1].end_date + '" class="dateUnselected">' + dates[len - 1].end_date + '</button>');
+        //    $dateBar.append($lastButton);
+
+        //    $("#dateBar button").bind("click", function () {
+        //        var $currentButton = $(this);
+        //        changeDateBar($currentButton[0].id);//改变进度条的状态
+        //        progress($currentButton[0].name);//控制进度条显示
+
+        //        //  showFeature($currentButton[0].id);//控制要素可见性
+        //        showChecked($currentButton[0].id);
+        //    });
+        //}
+
+
+        function updateDateBar() {
+            var $dateBar = $("#dateBar");
+            $dateBar.empty();//清空节点
+            var dates = datas[currentBuild].dates;
+            var len = dates.length;
+            var html = '<table><tr>';
+            for (var i = 0; i < len; i++) {
+                html += '<td id="' + i + 'datePros" name="' + dates[i].start_date + '" class="dateUnselected">' + dates[i].start_date + '</td>';
+            }
+            html += '<td id="' + len + 'datePros" name="' + dates[len - 1].end_date + '" class="dateUnselected">' + dates[len - 1].end_date + '</td>';
+            html += '<tr/></table>';
+            $dateBar.append(html);
+            $("#dateBar  [id$=datePros]").bind("click", function () {
+                var $td = $(this);
+                changeDateBar($td[0].id);//改变进度条的状态
+                progress($td[0].innerText);//控制进度条显示
+
+                //  showFeature($currentButton[0].id);//控制要素可见性
+                showChecked($td[0].id);
+            });
+        }
+        //改变时间进度条
+        //function changeDateBar(pid) {
+        //    var max = parseInt(pid);
+        //    var id = pid.substring(max.toString().length, pid.length);
+        //    var len = $("#dateBar button").length;
+
+        //    // $("#dateBar button.dateSelected").removeClass("dateSelected").addClass("dateUnselected");
+
+        //    for (var i = 0; i <= max; i++) {
+        //        var $sbutton = $("#" + i + id);
+        //        if (("dateSelected").indexOf($sbutton.attr("class"))===-1){
+        //            $sbutton.attr("class", "dateSelected");
+        //        }
+
+        //    }
+        //    for (var j = max+1; j <len; j++) {
+        //        var $uSbutton = $("#" + j + id);
+        //        if ("dateUnselected".indexOf($uSbutton.attr("class")) === -1) {
+        //            $uSbutton.attr("class", "dateUnselected");
+        //        }
+        //    }
+        //}
+        function changeDateBar(pid) {
+            var max = parseInt(pid);
+            var id = pid.substring(max.toString().length, pid.length);
+            var len = $("#dateBar [id$=datePros]").length;
+
+            for (var i = 0; i <= max; i++) {
+                var $std = $("#" + i + id);
+                if (("dateSelected").indexOf($std.attr("class")) === -1) {
+                    $std.attr("class", "dateSelected");
+                }
+
+            }
+            for (var j = max + 1; j < len; j++) {
+                var $uStd = $("#" + j + id);
+                if ("dateUnselected".indexOf($uStd.attr("class")) === -1) {
+                    $uStd.attr("class", "dateUnselected");
+                }
+            }
+        }
+
+        //获取产值
+        function getProductValue(pdate, attrName) {
+            var val = 0;
+            var dates = datas[currentBuild].dates;
+            for (var i = 0, len = dates.length; i < len; i++) {
+                for (var attr in dates[i]) {
+                    var json = dates[i];
+                    if (json.hasOwnProperty(attr)) {
+                        if (json.end_date.trim() === pdate.trim()) {
+                            val = json[attrName];
+                            break;
+                        }
+                    }
+                }
+            }
+            return val;
+        }
+
+        //将select添加地物选项
+        function addGeoToSelect() {
+            var $select = $("#geoName");
+            $select.empty();//清空节点
+            var geoObj = [];
+            for (var attr in datas) {
+                if (datas.hasOwnProperty(attr)) {
+                    geoObj.push(attr);
+                }
+            }
+
+            var len = geoObj.length;
+            for (var i = 0; i < len; i++) {
+                var $option = $('<option value="' + geoObj[i] + '">' + geoObj[i] + '</option>');
+                $select.append($option);
+            }
+
+            $("#geoName").bind("change", function () {//注册选项change事件
+                var name = $("#geoName option:selected").text();
+                showCompare(name);
+            });
+        }
+
+        //显示产值
+        function progress(pdate) {
+            var planValue = getProductValue(pdate, "planValue");
+            var realValue = getProductValue(pdate, "realValue");
+            planValueBar.progressbar("value", planValue);
+            realValueBar.progressbar("value", realValue);
+        }
+
+        //根据地物改变界面
+        function showCompare(name) {
+            currentBuild = name;
+            updateDateBar();//更改时间进度表
+            //   init_my_Build();//存储建筑物   
+        }
+
+        function hideLayers() {
+            var layers = ["摄像头", "123#建筑", "456#建筑", "789#建筑", "10#建筑", "11#建筑", "12#建筑", "13#建筑", "14#建筑", "15#建筑", "16#建筑"];
+            for (var i = 0; i < layers.length; i++) {
+                showLayer(layers[i], false);
+            }
+        }
+
+        function showLayer(dir, flag) {
+            var item1 = globe1.ProjectTree.FindItem(dir);
+            var item2 = globe2.ProjectTree.FindItem(dir);
+            try {
+                globe1.ProjectTree.SetVisibility(item1, flag);
+                globe2.ProjectTree.SetVisibility(item2, flag);
+
+            } catch (e) {
+                exportLog(e);
+            }
+
+        }
+
+        $(function () {
+            InitMyTEX();//初始化TE窗口
+
+            //初始化进度条
+            planValueBar = $("#planValue");
+            planValueLabel = $("#planValue-label");
+
+            planValueBar.progressbar({
+                value: 0,
+                change: function () {
+                    planValueLabel.text(planValueBar.progressbar("value") === 0 ? '' : planValueBar.progressbar("value") + "%");
+                }
+            });
+            realValueBar = $("#realValue");
+            realValueLabel = $("#realValue-label");
+
+            realValueBar.progressbar({
+                value: 0,
+                change: function () {
+                    realValueLabel.text(realValueBar.progressbar("value") === 0 ? '' : realValueBar.progressbar("value") + "%");
+                }
+            });
+
+            try {
+                window.onresize = Resize;
+            }
+            catch (e) {
+                window.onresize = Resize();
+            }
+        });
+
+    </script>
+</head>
+<body scroll="no">
+    <div id="main">
+        <div id="top">
+            <div class="header">
+                <label>建设项目施工进度和计划动态对比</label>
+            </div>
+            <div class="container">
+                <div class="lineSpan">
+                    <div class="floatLeft">
+                        <label for="geoName">对比对象:</label>
+                        <select id="geoName">
+                        </select>
+                        <label for="dateBar">时间进度:</label>
+                    </div>
+                    <div>
+                        <div id="dateBar" class="dateProgressbar"></div>
+                    </div>
+                </div>
+                <div class="lineSpan">
+                    <div class="floatLeft">
+                        <label for="planValue">计划产值:</label>
+                    </div>
+                    <div id="planValue" class="ui-progressbar">
+                        <div id="planValue-label" class="progress-label">
+                        </div>
+                    </div>
+                </div>
+                <div class="lineSpan">
+                    <div class="floatLeft">
+                        <label for="realValue">实际产值:</label>
+                    </div>
+                    <div id="realValue" class="ui-progressbar">
+                        <div id="realValue-label" class="progress-label">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mainContent">
+            <div id="show">
+                <table class="fillTable">
+                    <tr>
+                        <td align="center">
+                            <label>计划进度</label>
+                        </td>
+                        <td align="center">
+                            <label>实际进度</label>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div>
+                <table class="fillTable">
+                    <tr>
+                        <td>
+                            <div class="lineBox1">
+                                <object id="TEX1" classid="CLSID:3a4f9196-65a8-11d5-85c1-0001023952c1">
+                                </object>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="lineBox2">
+                                <object id="TEX2" classid="CLSID:3a4f9196-65a8-11d5-85c1-0001023952c1">
+                                </object>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

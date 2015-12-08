@@ -1,0 +1,429 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>中关村医疗器械园可视化建设4D系统</title>
+   <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" />
+    <script src="js/event.js" type="text/javascript"></script>
+    <script src="js/tools.js" type="text/javascript"></script>
+    <script src="js/jquery-1.10.2.js" type="text/javascript"></script>
+    <script src="js/clickCheck.js" type="text/javascript"></script>
+    <script src="js/flow.js" type="text/javascript"></script>
+<script src="js/app.js" type="text/javascript"></script>
+     <script src="js/util.js" type="text/javascript"></script>
+<style type="text/css">
+    #GeoObjType input {
+         text-align: center;
+        margin-right: 2px;
+        margin-left: 5px;
+         vertical-align: text-top
+    }
+     #GeoObjType label
+     {
+         font-size: 12px;
+         color: white;
+         text-align: center;
+         vertical-align: text-top;
+     }
+     a:link, a:visited ,a:active {
+         outline-color: #ffffff;
+         
+     }
+</style>
+    <script type="text/javascript" language="javascript">
+        var url = window.location.href;
+        var src = url.substring(0, url.lastIndexOf("/") + 1);
+        var bshowLeftPanel = 0;
+        var comPopup = null;
+        var menuNum = null;
+        var iflag = true;
+        var curFeature, abgrColor, heiColor;
+        var infoWindow = null;
+        var pop;
+        var camTip = 0;
+        function tabshow(value) {
+            var popMaxWidth = sgworld.Window.Rect.width;
+            var popMaxHeight = sgworld.Window.Rect.Height;
+
+            var comurl;
+            var htmlurl = window.location.href;
+            var allurl = htmlurl.substring(0, htmlurl.lastIndexOf("/") + 1);
+            var ScreenRectHeight = popMaxHeight;
+            var ScreenRectWidth = popMaxWidth ;
+
+            var iWidth, iHeight;
+            if (menuNum == null) {                
+                switch (value) {
+                    case 'Browse':
+                        comurl = "tool/browse.html";//浏览场景
+                        menuNum = '1';
+                        comPopup = sgworld.Creator.CreatePopupMessage(menuNum, allurl + comurl, 0, 0, 340, ScreenRectHeight);
+                        break;
+                    case 'lifeCycle1':
+                        //comurl = "tool/lifeCycle/lifeCycle1.htm";
+                        comurl = "DhtmlxGanttPage.html";//甘特图
+                        menuNum = '2';
+                        comPopup = sgworld.Creator.CreatePopupMessage(menuNum, allurl + comurl, 0, 0, ScreenRectWidth, 245);
+                        break;
+                    case 'lifeCycle':
+                        comurl = "tool/lifeCycle/mylifeCycle.html";//生命周期
+                        //comurl = "DhtmlxGanttPage.html";
+                        menuNum = '2';
+                        comPopup = sgworld.Creator.CreatePopupMessage(menuNum, allurl + comurl, 0, 0, popMaxWidth, popMaxHeight);
+                        break;
+                    case 'search':
+                        comurl = "tool/search.html";//搜索
+                        menuNum = '3';
+                        comPopup = sgworld.Creator.CreatePopupMessage(menuNum, allurl + comurl, 0, 0, 340, ScreenRectHeight);
+                        break;
+                    case 'compare':
+                        comurl = 'compare.html';//工程对比
+                        menuNum = '4';
+                        comPopup = sgworld.Creator.CreatePopupMessage(menuNum, allurl + comurl, 0, 0, 700, 700);
+                        break;
+                    case 'cam'://下载视频客户端软件及协议
+                        comurl = 'downloadCam.html';
+                        menuNum = '5';
+                        comPopup = sgworld.Creator.CreatePopupMessage(menuNum, allurl + comurl, 0, 0, 400, 150);
+                        break;
+                    case 'pipeCollision'://管线碰撞
+                        comurl = 'pipeCollision.html';
+                        menuNum = '6';
+                        comPopup = sgworld.Creator.CreatePopupMessage(menuNum, allurl + comurl, 0, 0, 200, 250);
+                        break;
+                    default:
+                        break;
+                }
+
+                comPopup.AllowResize = false;
+                comPopup.ShowCaption = false;
+                comPopup.AnchorToView = false;
+                sgworld.Window.ShowPopup(comPopup);
+
+            } else {
+                var allurl = htmlurl.substring(0, htmlurl.lastIndexOf("/") + 1);
+                var ScreenRectHeight = sgworld.Window.Rect.Height - 15;
+                var ScreenRectWidth = sgworld.Window.Rect.width - 335;
+                
+                switch (value) {
+                    case 'Browse':
+                        //window.document.getElementById("leftTab").src = "tool/browse.html";
+                        comurl = "tool/browse.html";
+                        menuNum = '1';
+                        iWidth = 340;
+                        iHeight = ScreenRectHeight;
+                        break;
+                    case 'lifeCycle1':
+                        //window.document.getElementById("leftTab").src = "tool/scene.html";
+                        //comurl = "tool/lifeCycle/lifeCycle1.htm";
+                        comurl = "DhtmlxGanttPage.html";
+                        menuNum = '2';
+                        iWidth = ScreenRectWidth;
+                        iHeight = 245;
+                        break;
+                    case 'lifeCycle':
+                        //window.document.getElementById("leftTab").src = "tool/scene.html";
+                        comurl = "tool/lifeCycle/mylifeCycle.html";
+                        //comurl = "DhtmlxGanttPage.html";
+                        menuNum = '2';
+                        iWidth = ScreenRectWidth;
+                        iHeight = ScreenRectHeight;
+                        break;
+                    case 'search':
+                        //window.document.getElementById("leftTab").src = "tool/scene.html";
+                        comurl = "tool/search.html";
+                        menuNum = '3';
+                        iWidth = 340;
+                        iHeight = ScreenRectHeight;
+                        break;
+                    case 'compare':
+                        comurl = 'compare.html';
+                        menuNum = '4';
+                        iWidth = 700;
+                        iHeight =700;
+                        break;
+                    case 'cam':
+                        comurl = 'downloadCam.html';
+                        menuNum = '5';
+                        iWidth =400;
+                        iHeight = 150;
+                        break;
+                    case 'pipeCollision':
+                        comurl = 'pipeCollision.html';
+                        menuNum = '6';
+                        iWidth = 200;
+                        iHeight = 250;
+                    default:
+                        break;
+                }
+                if (menuNum === '2' || menuNum === "4") {
+                    window.open(allurl + comurl);
+                    return;
+                }
+                if (menuNum != comPopup.caption) {
+                    sgworld.Window.RemovePopup(comPopup);
+                    comPopup = sgworld.Creator.CreatePopupMessage(menuNum, allurl + comurl, 0, 0, iWidth, iHeight);
+                    comPopup.AllowResize = false;
+                    comPopup.ShowCaption = false;
+                    comPopup.AnchorToView = false;
+                    sgworld.Window.ShowPopup(comPopup);
+                } else {
+                    sgworld.Window.RemovePopupByCaption(menuNum);
+                    menuNum = null;
+                }
+            }
+        }
+        
+
+
+        function tabhide() {
+            window.document.getElementById("leftTab").style.display = 'none';
+            bshowLeftPanel = 0;
+        }
+
+        var sgworld = null;
+        function Init() {
+            sgworld = CreateSGObj();
+
+            sgworld.AttachEvent("OnLoadFinished", OnLoadFinished);
+            sgworld.AttachEvent("OnObjectAction", OnObjectAction);
+
+            window.document.getElementById("TE3DWindow").style.width = window.document.documentElement.clientWidth - 276;
+            var file = "D:\\医疗器械园\\Default.fly";
+            sgworld.Open(file);
+            try {
+                window.onresize = Resize;
+            }
+            catch (e) {
+                window.onresize = Resize();
+            }
+        }
+        function Resize() {
+            window.document.getElementById("TE3DWindow").style.width = window.document.documentElement.clientWidth - 276;
+            if (pop) {
+                pop.Top = (sgworld.Window.Rect.Height - pop.Height) / 2;
+                pop.Left = (sgworld.Window.Rect.Width - pop.Width) / 2;
+            }
+        }
+        function OnLoadFinished() {
+            try {
+                infoWindow = sgworld.Creator.CreatePopupMessage("", "", 0, 0, 200, 200);
+                pop = sgworld.Creator.CreatePopupMessage("", "", 0, 0, 200, 200);
+                showObject("15#", false);
+            } catch (e) {
+                exportLog(e);
+            }
+        }
+
+        function OnObjectAction(ObjectID, Action) {
+            //if (Action == 13) {
+          //  alert(Action.Code);
+            //}
+        }
+
+        //注册点击查询事件
+        function Identify() {
+            if (!heiColor) {
+                heiColor = "#9932CC";
+            }
+            if (curFeature) {
+                curFeature.Tint.abgrColor = abgrColor;
+            }
+            if (iflag) {
+                sgworld.AttachEvent("OnLButtonDown", doIdentify);
+                sgworld.Window.SetInputMode(1);
+                iflag = !iflag;
+            }
+            else{
+                sgworld.DetachEvent("OnLButtonDown", doIdentify);
+                try {
+                    sgworld.Window.RemovePopup(infoWindow);
+                }
+                catch (e) {
+                    exportLog(e);
+                }
+                sgworld.Window.SetInputMode(0);
+            iflag = !iflag;
+            } 
+            
+        }
+        //属性查询
+        function doIdentify(Flags, X, Y) {
+            if (curFeature) {
+                curFeature.Tint.abgrColor = abgrColor;
+            }
+            var CursorCoord = sgworld.Window.PixelToWorld(X, Y);
+
+            if (CursorCoord.Type) {
+                var feature = null;
+                try {
+                    feature = sgworld.Creator.GetObject(CursorCoord.ObjectID);
+                    if (feature.ObjectType === 33) {//OT_FEATURE
+                    abgrColor = feature.Tint.abgrColor;
+                    curFeature = feature;
+                        feature.Tint.FromHTMLColor(heiColor);
+                      //  featureGlitter(feature);
+
+                    var attrs = feature.FeatureAttributes; //IFeatureAttributes66
+                    if (attrs.Count) {
+                        var json = {};
+                        for (var i = 0; i < attrs.Count; i++) {
+                            var item = attrs.Item(i);
+                            json[item.Name] = item.Value;
+                        }
+                        var html = attributesInfo(json);
+                        showInfo("属性查询", html, 250, 310);
+                    }
+                }
+
+            } catch (e) {
+                exportLog(e);
+                }
+           }
+            return true;
+        }
+
+
+        //qladd 显示信息树
+        function showInfoTree() {
+
+            var IInformationTree = sgworld.interface("IInformationTree5");
+            var IPlane = sgworld.interface("IPlane5");
+            IPlane.SetPosition(100, 100, 200, 45, -90, 2, 0, 0, 0);
+
+        }
+
+       
+        function showCam() {
+            tabshow('cam');
+        }
+        //显示提示信息
+        function showTip() {
+            if (camTip < 3) {
+                var url = window.location.href;
+                var camUrl = url + "/downloadCam.html";
+                var maxWidth = sgworld.Window.Rect.width;
+                var maxHeight = sgworld.Window.Rect.Height;
+
+                var tip = sgworld.Creator.CreatePopupMessage("提示", camUrl, maxWidth - 300, maxHeight - 300, 280, 280, 10000);
+
+                sgworld.Window.ShowPopup(tip);
+
+                camTip++;
+            }
+        }
+
+        function test() {
+            showObject("15#", true);
+            showObject("15#建筑", false);
+            var obj = {
+                pipe: {
+                    path: "15#\\喷淋\\PF2", //"模型\\1-3号建筑\\1-3号外壳-三维视图";
+                    name: "732540"
+                },
+                type: {
+                    path: "15#\\结构\\JF2", //"模型\\1-3号建筑\\1-3号外壳-三维视图";
+                    name: "493000"
+                }
+            }
+            locFeature(obj.pipe, 1);
+
+            locFeature(obj.type,2);
+        }
+    </script>
+</head>
+<body onload="Init();" scroll="no" style="background-image: url('images/bg.jpg'); margin: 0px; border: 0px;">
+    <div id="title" style="position: absolute; left: 0px; right: 0px; height: 89px; line-height: 89px; font-size: 30px; color:blue; text-align: left; background-image: url('images/header.png'); ">
+          <!--<img src="images/top3.jpg" />-->
+    </div>
+    <div style="position: absolute; top: 20px; right: 20px; font-size: smaller;">
+        <table style="visibility:hidden;">
+            <tr>
+                <td>
+                    <div>当前用户：管理员</div>
+                </td>
+                <td>
+                    <div style="background-color: #3486C5; color: white; width: 60px; height: 20px;">
+                        <table>
+                            <tr>
+                                <td>角色切换</td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+                <td>
+                    <div style="background-color: #3486C5; color: white; width: 36px; height: 20px;">
+                        <table>
+                            <tr>
+                                <td>帮助</td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="tool" style="position: absolute; top: 89px; left: 0px; right: 0px; height: 30px; background-color: #55656F;">
+        <table style="width: 100%; height: 100%;">
+            <tr>
+             <!--   <td style="text-align: left; vertical-align: central;">
+                    <div id="GeoObjType">
+                        <input type="checkbox" id="structure_beam" name="geoType"/> <label for="structure_beam">结构梁</label>
+                        <input type="checkbox" id="structure_column" name="geoType"/> <label for="structure_column">结构柱</label>
+                        <input type="checkbox" id="structure_slab" name="geoType"/> <label for="structure_slab">结构板</label>
+                        <input type="checkbox" id="shear_wall" name="geoType"/> <label for="shear_wall">剪力墙</label>
+                        <input type="checkbox" id="curtain_wall" name="geoType"/> <label for="curtain_wall">幕墙</label>
+                         <input type="checkbox" id="pipeline" name="geoType"/> <label for="pipeline">管线</label>
+                    </div>
+                </td>-->
+                <td style="text-align: right; vertical-align: central;">
+           <!--         <img src="images/tool_pipe_collision.png" title="管线碰撞" onclick="test();" alt="管线碰撞"/>-->
+                    <img src="images/tool_pipe_collision.png" title="管线碰撞" onclick="tabshow('pipeCollision')" alt="管线碰撞"/>
+                    <img src="images/tool_length_area.png" title="距离量测" onclick="distance3D();" alt="距离量测" style=""/>
+                    <img src="images/tool_area_measure.png" title="面积量测" onclick="cover();" alt="面积量测" style=""/>
+                    <img src="images/tool_attributes_query.png" title="信息查看" onclick="Identify();" alt="信息查看" style=""/>
+                    <a href="run://" style="height: 20px;"><img src="images/tool_cam.png" onmouseover="showTip();" title="查看摄像" alt="查看摄像" style="border-width: 0px;"/></a>
+                       <img src="images/tool_lifecycle.png" title="生命周期" onclick="tabshow('lifeCycle');" alt="信息查看" style=""/>
+                    <!-- <img src="images/tool_opacity.png" onclick="freePellucidity()" alt="透明度"/>-->
+                    <img src="images/tool_time.png" title="时间" onclick="timeProgress()" alt="时间"/>
+                    <!-- <img src="images/tool_north.png" onclick="north()" alt="指北"/>-->
+                    <img src="images/tool_rotate.png" title="旋转" onclick="revolve()" alt="旋转"/>
+                    <img src="images/tool_underground.png" title="地下模式" onclick="subterranean()" alt="地下模式"/>
+                    <!-- <img src="images/hideObject.png" onclick="hideObject()" alt="隐藏对象" style=""/>
+                    <img src="images/hideObject.png" onclick="showAllObject()" alt="全部显示" style=""/>-->
+                    <img src="images/tool_compare.png" title="工程对比" onclick="tabshow('compare')" alt="工程对比" style=""/>
+                  <!-- <img src="images/tool_browse.png" title="浏览" onclick="tabshow('Browse')" alt="浏览" style=""/>-->
+                    <img src="images/tool_view_type.png" title="场景分类" onclick="tabshow('search')" alt="场景分类" style=""/>
+                    &nbsp;&nbsp;
+                </td>
+            </tr>
+        </table>
+
+    </div>
+    <!--
+    <div id="left" style="position: absolute; left: 0px; top: 65px; width: 76px; height: 100%; cursor: pointer;">
+        <div id="Browse" style="border-style: none none solid none; border-width: 1px; border-color: #666666; position: absolute; top: 0px; width: 76px; height: 76px; background-image: url('images/Browse.png')" onclick="tabshow('Browse')" onmousedown="selectbutton(this)"></div>
+
+        <div id="search" style="border-style: none none solid none; border-width: 1px; border-color: #666666; position: absolute; top: 152px; width: 76px; height: 76px; background-image: url('images/search.png'); " onclick="tabshow('search')" onmousedown="selectbutton(this)"></div>
+
+        <div id="lifeCycle" style="border-style: none none solid none; border-width: 1px; border-color: #666666; position: absolute; top: 76px; width: 76px; height: 76px; background-image: url('images/lifeCycle.png'); " onclick="tabshow('lifeCycle')" onmousedown="selectbutton(this)"></div>
+
+    </div>
+    -->
+    <div style="position: absolute; left: 0px; top: 115px; width:276px;height:100%;cursor: pointer;">
+      <!--实例化信息树对象,通过CLSID来唯一标识-->
+	  <object id="TerraExplorerInformationWindow" classid="CLSID:3a4f9193-65a8-11d5-85c1-0001023952c1" width="100%" height="100%"></object>
+    </div>
+    <!--
+    <iframe id="leftTab" src="tab1.htm" scrolling="no" style="display: none; position: absolute; left: 76px; top: 65px; width: 230px; height: 600px; z-index: 1;"></iframe>
+    -->
+    <div style="position: absolute; left: 276px; top: 115px; right: 0px; bottom: 0px;">
+      
+
+        <object id="TE3DWindow" classid="clsid:3a4f9192-65a8-11d5-85c1-0001023952c1" width="100%"
+            style="position: absolute; top: 0px; left: 0px; bottom: 0px; height: 100%; filter: alpha(opacity=0); z-index: -1;">
+        </object>
+  
+    </div>
+        
+</body>
+</html>

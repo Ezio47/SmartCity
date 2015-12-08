@@ -1,0 +1,34 @@
+﻿html, body {height: 100%; width: 100%; margin: 0;} 
+body{font-family: "Trebuchet MS"; }
+#header {height:200px; width:1008px; margin-left: auto;margin-right: auto}
+#header .wordTitle {font-family:'微软雅黑';font-size: 30px;color: #000;font-weight: bold; text-align:center; padding-top:20px; margin-left: auto;margin-right: auto}
+#leftPane{margin: 1px;padding:0px;background-color:white;color:#3f3f3f;border: solid 1px #224a54;width:220px; height:100%; float:left;}
+#right {margin:1px;border:solid 1px #224a54;padding:0 0 0 0;height:100%;float:left;width:780px;}
+#center{width:1008px; height:500px; margin-left: auto;margin-right: auto}
+#tabs{padding:5px;}
+.button{height:16px;}
+#titlePane{width:240px;}
+#Resize{cursor:e-resize;}
+#cPane{ height:496px; }
+#TerraExplorerX{height:498px;}
+#TerraExplorerInformationWindow{height:468px;}
+* { margin: 0; padding: 0; }
+.door_container { width:216px; background:#fff;  border:1px solid #ccc;}
+.door_container .TabTitle { float:left; height:26px; margin-left:0px; padding-left:0px; margin-bottom:0px; }
+.door_container .TabTitle li { list-style:none; float:left; width:65px; height:26px; cursor:pointer; padding-left:0px;line-height:26px; color:#7c7c7c; font-size:12px; text-align:center; font-weight:bold; background:#DDDDDD;}
+.door_container .TabTitle .active { color:#0066CC; background:#fff; background-image:url('../images/selname002.gif'); }
+.door_container .TabTitle .normal { color:#7c7c7c;background-image:url('../images/selname001.gif');  }
+.door_container .TabContent { width:215px; background:#fff; height:100%;}
+.none { display: none; }
+a { font-size:12px;text-decoration:none;}
+a:link {color:Black; text-decoration:none;}    
+a:active:{color: Black;text-decoration:none; } 
+a:visited {color:Black;text-decoration:none;} 
+a:hover {color: Black; text-decoration:none;}
+.toolsa {padding-top:0px;margin-top:0px;}
+.door_menu { width:1006px; background:#fff;  border:1px solid #ccc; }
+.door_menu .menu_Title { float:left; height:26px;width:100%; margin-left:0px; padding-left:0px; margin-bottom:0px;}
+.door_menu .menu_Title li { list-style:none; float:left; width:65px; height:26px; cursor:pointer; padding-left:0px;line-height:26px; color:#7c7c7c; font-size:12px; text-align:center; font-weight:bold; background:#DDDDDD; }
+.door_menu .menu_Title .active { color:#0066CC; background:#fff; background-image:url('../images/selname002.gif'); }
+.door_menu .menu_Title .normal { color:#7c7c7c;background-image:url('../images/selname001.gif');  }
+.door_menu .menu_TabContent { width:100%; background:#fff; height:88px; }

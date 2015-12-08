@@ -1,0 +1,273 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Free Multi-Node Range & Data Slider: jQSlider</title>
+    <script src="jquery-1.4.4.min.js" type="text/javascript"></script>
+    <script src="jqslider.js" type="text/javascript"></script>
+    <link href="jqslider.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript">
+      
+        var tableData;
+        var startValue = 1;
+        var endValue = 5;
+        var array = ["建筑剪力墙", "结构板", "结构柱", "结构梁", "外幕墙"];
+        var arrayObj = new Array();
+        var ml;
+        function ini_my() {
+            ml = sgworld.ProjectTree.GetObject(sgworld.ProjectTree.FindItem("模型\\13号建筑"));
+            //sgworld.ProjectTree.SetVisibility(ml.ID, false);
+            for (var i = 0; i < array.length; i++) {
+                for (var j = 0; j < ml.FeatureLayers.Count; j++) {
+                    var name = ml.FeatureLayers.Item(j).TreeItem.Name;
+                    if (name.indexOf(array[i]) >= 0) {
+                        arrayObj.push(ml.FeatureLayers.Item(j));
+                        break;
+                    }
+                }
+            }
+        }
+
+        function ini_my(modedir) {
+            ml = sgworld.ProjectTree.GetObject(sgworld.ProjectTree.FindItem(modedir));
+            //sgworld.ProjectTree.SetVisibility(ml.ID, false);
+            for (var i = 0; i < array.length; i++) {
+                for (var j = 0; j < ml.FeatureLayers.Count; j++) {
+                    var name = ml.FeatureLayers.Item(j).TreeItem.Name;
+                    if (name.indexOf(array[i]) >= 0) {
+                        arrayObj.push(ml.FeatureLayers.Item(j));
+                        break;
+                    }
+                }
+            }
+        }
+
+
+        $(document).ready(function () {
+            //copy data
+            //ini_my();
+            ini_my("模型\\13号建筑\\13#建筑剪力墙-三维视图-{三维}");
+            ini_my("模型\\13号建筑\\13#结构板-三维视图-{三维}");
+            ini_my("模型\\13号建筑\\13#结构梁-三维视图-{三维}");
+            ini_my("模型\\13号建筑\\13#结构柱-三维视图-{三维}");
+            ini_my("模型\\13号建筑\\13#外幕墙-三维视图-{三维}");
+            tableData = $('<table/>');
+            $('#demo-data tbody tr').each(function (index) {
+                tableData.append($(this).clone());
+            });
+            var sliderContainer = $('#demo-slider-container');
+            sliderContainer.html('');
+            var sl = $('<div/>').attr('id', 'default');
+            $('#default').attr('width', '400px');
+            sliderContainer.append(sl);
+            sl.jqslider({ rangeSelection: true, theme: 'default', selStart: startValue, selEnd: endValue, ticks: true, minValue: 1, maxValue: 5, callback: onSlide });
+        });
+        function onSlide(selectionStart, SelectionEnd) {
+
+            //$('#text').html(selectionStart);
+            startValue = selectionStart;
+            endValue = SelectionEnd;
+
+            //var ml = sgworld.ProjectTree.GetObject(sgworld.ProjectTree.FindItem("模型\\13号建筑"));
+            //sgworld.ProjectTree.SetVisibility(ml.ID, false);
+          
+            for (var i = 0; i < 5; i++) {
+                if ((i < selectionStart - 1) || (i >= SelectionEnd)) {
+
+                    sgworld.ProjectTree.SetVisibility(arrayObj[i].ID, false);
+                }
+
+                else if (sgworld.ProjectTree.GetVisibility(arrayObj[i].ID)==0) {
+                    sgworld.ProjectTree.SetVisibility(arrayObj[i].ID, true);
+                }
+            }
+
+            $('#demo-data tbody tr').remove();
+            if (tableData != null) {
+                tableData.find('tr').each(function (index) {
+
+                    var id = parseInt($(this).find('td:eq(0)').html());
+                    if (id >= parseInt(selectionStart) && id <= parseInt(SelectionEnd)) {
+                        $('#demo-data tbody').append($(this).clone());
+                    }
+                });
+            }
+        }
+             
+    </script>
+    <style type="text/css">
+        #demo
+        {
+            width: 100%;
+            margin: auto;
+        }
+        #demo #tabs
+        {
+            margin: 0;
+            padding: 0;
+        }
+        #demo #tabs li
+        {
+            display: inline-block;
+            float: left;
+            width: 90px;
+            cursor: pointer;
+            background-color: #FBFBFB;
+            background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#FBFBFB), to(#E1E2E3));
+            background-image: -moz-linear-gradient(#FBFBFB, #E1E2E3);
+            background-image: -webkit-linear-gradient(#FBFBFB, #E1E2E3);
+            background-image: -o-linear-gradient(#FBFBFB, #E1E2E3);
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#FBFBFB', endColorstr='#E1E2E3',GradientType=0 );
+            border: solid 1px #CFCFCF;
+            text-align: center;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+        .selected-tab
+        {
+            background: none !important;
+            background-color: #FFFFFF !important;
+            background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#FFFFFF), to(#FFFFFF)) !important;
+            background-image: -moz-linear-gradient(#FFFFFF, #FFFFFF) !important;
+            background-image: -webkit-linear-gradient(#FFFFFF, #FFFFFF) !important;
+            background-image: -o-linear-gradient(#FFFFFF, #FFFFFF) !important;
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#FFFFFF', endColorstr='#FFFFFF',GradientType=0 ) !important;
+        }
+        .clear
+        {
+            clear: both;
+        }
+        #tabs-container > div {
+            padding:20px 3px 3px 3px;
+          
+            border: solid 1px #CFCFCF; /*height: 400px;*/
+        }
+
+
+        #demo-data
+        {
+            margin-top: 20px;
+            width: 100%;
+            font-size: 12px;
+        }
+        #demo-data th
+        {
+            background-color: #72AEEB;
+            background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#FBFBFB), to(#E1E2E3));
+            background-image: -moz-linear-gradient(#FBFBFB, #E1E2E3);
+            background-image: -webkit-linear-gradient(#FBFBFB, #E1E2E3);
+            background-image: -o-linear-gradient(#FBFBFB, #E1E2E3);
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#FBFBFB', endColorstr='#E1E2E3',GradientType=0 );
+            border: solid 0px white;
+            font-weight: bold;
+            font-size: 12px;
+            text-align: left;
+            padding: 5px;
+        }
+        #demo-data td
+        {
+            padding: 5px;
+            border: solid 0px white;
+        }
+
+
+        table tr:nth-child(odd){background:#D1EEFE;}
+
+    </style>
+</head>
+<body>
+    <div id="demo">
+      
+       
+        <div id="tabs-container">
+            <div class="1">
+                <div id="demo-slider-container">
+                </div>
+                <div class="clear">
+                </div>
+                <table id="demo-data" cellpadding="0" cellspacing="0">
+                    <thead bgcolor="red">
+                        <tr>
+                            <th >
+                                序号
+                            </th>
+                            <th>
+                                名称
+                            </th>
+                            <th>
+                                日期
+                            </th>
+                           
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                1
+                            </td>
+                            <td>
+                                建筑剪力墙
+                            </td>
+                            <td>
+                                2013年1月10日- 2013年8月10日
+                            </td>
+                          
+                        </tr>
+                        <tr>
+                            <td>
+                                2
+                            </td>
+                            <td>
+                                结构板
+                            </td>
+                            <td>
+                                2013年8月10日- 2014年3月5日
+                            </td>
+                           
+                        </tr>
+                        <tr>
+                            <td>
+                                3
+                            </td>
+                            <td>
+                                结构柱
+                            </td>
+                            <td>
+                                2014年3月5日- 2014年8月5日
+                            </td>
+                            
+                        </tr>
+                        <tr>
+                            <td>
+                                4
+                            </td>
+                            <td>
+                                结构梁
+                            </td>
+                            <td>
+                                2014年8月5日- 2015年1月5日
+                            </td>
+                           
+                        </tr>
+                        <tr>
+                            <td>
+                                5
+                            </td>
+                            <td>
+                               外幕墙
+                            </td>
+                            <td>
+                                2015年1月5日- 2015年8月5日
+                            </td>
+                          
+                        </tr>
+                       
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <object id="sgworld" classid="CLSID:3a4f9199-65a8-11d5-85c1-0001023952c1"></object>
+     
+   </body>
+</html>

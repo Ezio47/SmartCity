@@ -1,0 +1,348 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+    <link href="toc/zTreeStyle.css" rel="stylesheet" type="text/css" />
+    <script src="toc/jquery.ztree.core-3.5.js" type="text/javascript"></script>
+    <script src="toc/jquery.ztree.excheck-3.5.js" type="text/javascript"></script>
+    <link href="toc/demo.css" rel="stylesheet" type="text/css" />
+    <script src="js/util.js"></script>
+    <title>管线碰撞</title>
+    <style type="text/css">
+        html body
+        {
+            background-color: #d3d3d3;
+            height: 100%;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+        }
+
+        table
+        {
+            height: 100%;
+            width: 100%;
+            margin: auto;
+            font-family: Cursive;
+            line-height: 1.15em;
+            text-align: center;
+        }
+
+       .title
+        {
+            width: 80px;
+            height: 20px;
+            border: 0px;
+           float: left;
+        }
+      #importExcel
+        {
+          float: right;
+            width: 50px;
+            height: 20px;
+            background-color: #3D97F4;
+            border: 0px;
+        }
+    </style>
+    <script>
+        var zTree;
+        /**
+         * 节点属性 
+         * @id 节点id号
+         * @pId 父节点id号
+         * @name 节点名称
+         * @isParent true /false
+         * @nocheck true/false
+         * @open true/false
+         * @up 鼠标抬起
+         * @down 鼠标按下
+         * @right 鼠标右击 true/false
+         * @iconOpen  iconClose  png图标样式
+         * @right 鼠标右击 true/false
+         * @url url地址
+         * @target '_blank'
+         * @click 事件
+         * @chkDisabled:true,
+         * @checked:true                                       
+         */
+        var zNodes = [];
+        var setting = {
+            view: {
+                dblClickExpand: true,
+                showLine: true,
+                selectedMulti: false
+            },
+            check: {
+                enable: false,
+                chkDisabledInherit: true,
+                nocheckInherit: true
+            },
+            callback: {
+                onClick: onClick
+            },
+            data: {
+                key: {},
+                simpleData: {
+                    enable: true
+                }
+            }
+        };
+
+        var delimer = "\\";
+        var currentBuild;
+        var models = {
+            path: {
+                "结构": "J",
+                "暖通": "N",
+                "喷淋": "P"
+            },
+            obj: {
+                "15#": {
+                    pathPre: "15#\\",
+                    pathNex: "",
+                    datas: {
+                        "暖通": {
+                            "0": {
+                                "管线编号": "532832",
+                                "管线类别": "暖通",
+                                "碰撞对象编号": "729386",
+                                "碰撞对象类别": "喷淋",
+                                "碰撞位置": "15号楼1层",
+                                "碰撞说明": "硬碰撞 距离 -0.116"
+                            },
+                            "1": {
+                                "管线编号": "532830",
+                                "管线类别": "暖通",
+                                "碰撞对象编号": "729544",
+                                "碰撞对象类别": "喷淋",
+                                "碰撞位置": "15号楼1层",
+                                "碰撞说明": "硬碰撞 距离 -0.106"
+                            },
+                            "2": {
+                                "管线编号": "532829",
+                                "管线类别": "暖通",
+                                "碰撞对象编号": "729386",
+                                "碰撞对象类别": "喷淋",
+                                "碰撞位置": "15号楼1层",
+                                "碰撞说明": "硬碰撞 距离 -0.104"
+                            },
+                            "3": {
+                                "管线编号": "532830",
+                                "管线类别": "暖通",
+                                "碰撞对象编号": "729386",
+                                "碰撞对象类别": "喷淋",
+                                "碰撞位置": "15号楼1层",
+                                "碰撞说明": "硬碰撞 距离 -0.097"
+                            }
+                        },
+                        "喷淋": {
+                            "0": {
+                                "管线编号": "731870",
+                                "管线类别": "喷淋",
+                                "碰撞对象编号": "492980",
+                                "碰撞对象类别": "结构",
+                                "碰撞位置": "15号楼2层",
+                                "碰撞说明": "硬碰撞 距离 -0.17"
+                            },
+                            "1": {
+                                "管线编号": "732461",
+                                "管线类别": "喷淋",
+                                "碰撞对象编号": "492978",
+                                "碰撞对象类别": "结构",
+                                "碰撞位置": "15号楼2层",
+                                "碰撞说明": "硬碰撞 距离 -0.147"
+                            },
+                            "2": {
+                                "管线编号": "732185",
+                                "管线类别": "喷淋",
+                                "碰撞对象编号": "492968",
+                                "碰撞对象类别": "结构",
+                                "碰撞位置": "15号楼2层",
+                                "碰撞说明": "硬碰撞 距离 -0.135"
+                            },
+                            "3": {
+                                "管线编号": "732524",
+                                "管线类别": "喷淋",
+                                "碰撞对象编号": "492988",
+                                "碰撞对象类别": "结构",
+                                "碰撞位置": "15号楼2层",
+                                "碰撞说明": "硬碰撞 距离 -0.133"
+                            },
+                            "4": {
+                                "管线编号": "732540",
+                                "管线类别": "喷淋",
+                                "碰撞对象编号": "493000",
+                                "碰撞对象类别": "结构",
+                                "碰撞位置": "15号楼2层",
+                                "碰撞说明": "硬碰撞 距离 -0.126"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        function onClick(event, treeId, treeNode, clickFlag) {
+            if (treeNode.pid === 0) {
+                zTree.expandNode(treeNode, true, true, false);
+            } else {
+                showPipeInfo(treeNode.pname, treeNode.index, treeNode.name);
+            }
+        }
+
+        //显示碰撞管线具体信息
+        function showPipeInfo(pname, index, name) {
+            var datas = models["obj"][currentBuild]["datas"];
+            var json = datas[pname][index];
+            var content = attributesInfo(json);
+            var obj = getModir(json);//获取管线对象和碰撞对象
+            if (obj.pipe) {
+                locFeature(obj.pipe, 1);//定位到管线对象
+            }
+            if (obj.type) {
+                locFeature(obj.type, 2); //定位到碰撞对象
+            }
+
+            showPop("管线碰撞", content, 250, 250);
+
+        }
+
+        function findLoc(loc) {
+            var build = null;
+            var floor = null;
+            var pre = null;
+            var last = null;
+            var nav = null;
+            var name = null;
+            name = "号楼";
+            pre = loc.indexOf(name);
+            if (pre > -1) {
+                build = loc.substring(0, pre);
+                build = transfer(build);
+            } else {
+                name = "#";
+                pre = loc.indexOf(name);
+                if (pre > -1) {
+                    build = loc.substring(0, pre);
+                    build = transfer(build);
+                }
+            }
+            nav = pre + name.length;
+            last = loc.indexOf("层");
+            if (last > -1) {
+                floor = loc.substring(nav, last);
+                floor = "F" + transfer(floor);
+
+            }
+            if (loc.indexOf("屋顶") > -1) {
+                floor = "WD";
+            }
+            if (loc.indexOf("地下室") > -1) {
+                floor = "DXS";
+            }
+
+            return { build: build, floor: floor };
+        }
+
+        function findModir(type, loc) {
+            var json = findLoc(loc);
+            var path = models["obj"][currentBuild]["pathPre"] + type + delimer + models["path"][type] + json.floor + models["obj"][currentBuild]["pathNex"];
+            return path;
+        }
+
+        function getModir(obj) {
+            var json = null;
+            if (obj) {
+                var pipeCode = obj["管线编号"];
+                var pipePath = findModir(obj["管线类别"], obj["碰撞位置"]);
+
+                var typeCode = obj["碰撞对象编号"];
+                var typePath = findModir(obj["碰撞对象类别"], obj["碰撞位置"]);
+                json = {
+                    pipe: {
+                        path: pipePath,
+                        name: pipeCode
+                    },
+                    type: {
+                        path: typePath,
+                        name: typeCode
+                    }
+                }
+            }
+            return json;
+        }
+
+        function changeLayerVisibility() {
+            showObject(currentBuild, true);
+            showObject(currentBuild + "建筑", false);
+        }
+
+        function getNodes() {
+            var i = 1, j = 0;
+            var datas = models["obj"][currentBuild]["datas"];
+            for (var d in datas) {
+                if (datas.hasOwnProperty((d))) {
+                    var node = {
+                        id: i,
+                        pid: 0,
+                        name: d,
+                        open: true,
+                        isParent: true
+                    };
+                    zNodes.push(node);//添加父节点
+                    var json = datas[d];
+                    for (var k in json) {
+                        if (json.hasOwnProperty(k)) {
+                            var leaf = {
+                                index: k,
+                                id: i * 100 + j,
+                                pid: i,
+                                name: json[k]["管线编号"],
+                                pname: d, //管线类别
+                                open: false,
+                                isParent: false
+                            };
+                            zNodes.push(leaf); //添加叶节点
+                            j++;
+                        }
+                    }
+                    i++;
+                }
+            }
+        }
+
+
+        function importExcel() {
+            // alert("功能正在开发中,请等候！");
+            initTree();
+        }
+
+        function initTree() {
+            currentBuild = "15#";
+            changeLayerVisibility();
+
+            var tree = $("#tree");
+            zNodes = [];
+            getNodes();
+
+            $.fn.zTree.init(tree, setting, zNodes);
+
+            zTree = $.fn.zTree.getZTreeObj("tree");
+        }
+    </script>
+</head>
+<body>
+    <div>
+        <div>
+            <div>
+                <label class="title"  for="tree">管线碰撞</label>
+                 <button id="importExcel" name="importExcel" onclick="importExcel();">导入</button>
+            </div>
+            <div id="tree" class="ztree" style="width: 150px; overflow: auto;">
+            </div>
+        </div>
+        <object id="sgworld" classid="CLSID:3a4f9197-65a8-11d5-85c1-0001023952c1"></object>
+    </div>
+</body>
+</html>

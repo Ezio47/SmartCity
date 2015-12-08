@@ -1,0 +1,115 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>三维多窗口演示</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
+    <script type="text/javascript">
+        var idleMode = null;
+        var globe1;
+        var globe2;
+        var TerrainDatabaseToOpen = "D:\\中关村医疗园demo\\Default.fly";
+
+
+        function g2SetAsLeader() {
+            globe2.Application.Multiple3DWindows.SetAsLeader();
+        }
+        function g2OnFrame() {
+            if (idleMode == 2) {
+                var pos = globe2.Navigate.GetPosition(3);
+                globe1.Navigate.SetPosition(pos);
+            }
+        }
+        function g2OnLButtonDown(Flags, X, Y, pbHandled) {
+            idleMode = 2;
+        }
+
+        function g1SetAsLeader() {
+            globe1.Application.Multiple3DWindows.SetAsLeader();
+        }
+        function g1OnFrame() {
+            if (idleMode == 1) {
+                var pos = globe1.Navigate.GetPosition(3);
+                globe2.Navigate.SetPosition(pos);
+            }
+        }
+        function g1OnLButtonDown(Flags, X, Y, pbHandled) {
+            idleMode = 1;
+        }
+        //var TEX1 = null;
+        function Init() {
+            var TEX1 = window.document.getElementById("TEX1");
+            var TEX2 = window.document.getElementById("TEX2");
+
+            TEX1.width = window.document.documentElement.clientWidth / 2;
+            TEX1.height = window.document.documentElement.clientHeight;
+
+            TEX2.width = window.document.documentElement.clientWidth / 2;
+            TEX2.height = window.document.documentElement.clientHeight;
+            TEX2.style.left = window.document.documentElement.clientWidth / 2;
+
+            //TEX1 = CreateTEX1();
+            globe1 = TEX1.CreateInstance("TerraExplorerX.SGWorld66");
+            globe1.Open(TerrainDatabaseToOpen);
+            globe1.AttachEvent("OnFrame", g1OnFrame);
+            globe1.AttachEvent("OnLButtonDown", g1OnLButtonDown);
+            globe2 = TEX2.CreateInstance("TerraExplorerX.SGWorld66");
+            globe2.AttachEvent("OnFrame", g2OnFrame);
+            globe2.AttachEvent("OnLButtonDown", g2OnLButtonDown);
+            globe2.Open(TerrainDatabaseToOpen);
+            idleMode = 1;
+        }
+
+        function Resize() {
+            var TEX1 = window.document.getElementById("TEX1");
+            var TEX2 = window.document.getElementById("TEX2");
+
+            TEX1.width = window.document.documentElement.clientWidth / 2;
+            TEX1.height = window.document.documentElement.clientHeight;
+
+            TEX2.width = window.document.documentElement.clientWidth / 2;
+            TEX2.height = window.document.documentElement.clientHeight;
+            TEX2.style.left = window.document.documentElement.clientWidth / 2;
+        }
+
+        /*  
+        功能:   创建sgworld对象
+        备注:   赵贺 2011.04.01.
+        */
+
+        function CreateSGObj() {
+            var obj = $("sgworld");
+            if (obj == null) {
+                obj = document.createElement('object');
+                document.body.appendChild(obj);
+                obj.name = "sgworld";
+                obj.id = "sgworld";
+                obj.classid = "CLSID:3a4f91b0-65a8-11d5-85c1-0001023952c1";
+            }
+            return obj;
+        }
+        function $(id) {
+            return window.document.getElementById(id);
+        }
+        function CreateTEX1() {
+            var obj = $("TEX1");
+            if (obj == null) {
+                obj = document.createElement('object');
+                document.body.appendChild(obj);
+                obj.name = "TEX1";
+                obj.id = "TEX1";
+                obj.classid = "CLSID:3a4f9196-65a8-11d5-85c1-0001023952c1";
+                obj.width = "400px";
+                obj.height = "400px";
+            }
+            return obj;
+        }
+    </script>
+</head>
+<body onload="Init();" onresize="Resize();" scroll="no" style=" border:0px; margin:0px;">
+    <object id="TEX1" classid="CLSID:3a4f9196-65a8-11d5-85c1-0001023952c1" style="position:absolute;">
+    </object>
+    <object id="TEX2" classid="CLSID:3a4f9196-65a8-11d5-85c1-0001023952c1" style="position:absolute;">
+    </object>    
+</body>
+</html>

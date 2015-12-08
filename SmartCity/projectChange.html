@@ -1,0 +1,134 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>项目变更</title>
+    <script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+    <link href="jquery-ui-1.11.4.custom/jquery-ui.css" rel="stylesheet"/>
+    <link href="css/two.css" rel="stylesheet"/>
+    <script type="text/javascript" src="jquery-ui-1.11.4.custom/jquery-ui.js"></script>
+    <script type="text/javascript" src="js/util.js"></script>
+    <style type="text/css">
+         #mainView{
+            width: 100%;
+            height: 100%;
+            margin: auto;
+        }
+    </style>
+      <script type="text/javascript">
+          var TEX1, TEX2 = null;
+          var globe1;
+          var globe2;
+          var loaded = 0;
+          var fly1Path = "D:\\大兴汇报\\designChangeY.fly";
+          var fly2Path = "D:\\大兴汇报\\designChangeG.fly";
+          var modedir = "设计变更\\数据机房";
+          function InitMyTEX() {
+              TEX1 = window.document.getElementById("TEX1");
+              TEX2 = window.document.getElementById("TEX2");
+
+
+              TEX1.width = "100%";
+              TEX1.height = 600;
+              TEX2.width = "100%";
+              TEX2.height = 600;
+
+              globe1 = TEX1.CreateInstance("TerraExplorerX.SGWorld66");
+              globe2 = TEX2.CreateInstance("TerraExplorerX.SGWorld66");
+
+
+              globe1.AttachEvent("OnLoadFinished", OnLoadFinished);
+              globe2.AttachEvent("OnLoadFinished", OnLoadFinished);
+
+              globe1.Open(fly1Path);
+              globe2.Open(fly2Path);
+          }
+
+          function OnLoadFinished() {
+              loaded++;
+              if (loaded === 2) {
+                  if (getParameter("dir")) {
+
+                      modedir = getParameter("dir");
+                  };
+                  //   flyTo(modedir);
+              }
+          }
+
+
+          function Resize() {
+              TEX1.width = "100%";
+              TEX1.height = 600;
+
+              TEX2.width = "100%";
+              TEX2.height = 600;
+          }
+
+          function CreateTEX(id) {
+              var myid = "TEX" + id;
+              var obj = $(myid);
+              if (obj == null) {
+                  obj = document.createElement('object');
+                  document.body.appendChild(obj);
+                  obj.name = myid;
+                  obj.id = myid;
+                  obj.classid = "CLSID:3a4f9196-65a8-11d5-85c1-0001023952c1";
+                  obj.width = "400px";
+                  obj.height = "400px";
+              }
+              return obj;
+          }
+
+          function flyTo(modedir) {
+              var dir1 = modedir + "1";
+              var dir2 = modedir + "2";
+              var m1 = globe1.ProjectTree.GetObject(globe1.ProjectTree.FindItem(dir1));
+              var m2 = globe2.ProjectTree.GetObject(globe2.ProjectTree.FindItem(dir2));
+              globe1.Navigate.FlyTo(m1);
+              globe2.Navigate.FlyTo(m2);
+          }
+
+          $(function () {
+              InitMyTEX();//初始化TE窗口
+
+              window.onresize = Resize();
+          });
+
+      </script>
+</head>
+<body scroll="no">
+<div id="mainView">
+    <div class="mainContent">
+        <div id="show">
+             <table class="fillTable">
+                <tr>
+                    <td align="center">
+                        <label>变更前方案</label>
+                    </td>
+                    <td align="center">
+                        <label>变更后方案</label>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div>
+            <table class="fillTable">
+                <tr>
+                    <td>
+                        <div class="lineBox1">
+                            <object id="TEX1" classid="CLSID:3a4f9196-65a8-11d5-85c1-0001023952c1">
+                            </object>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="lineBox2">
+                            <object id="TEX2" classid="CLSID:3a4f9196-65a8-11d5-85c1-0001023952c1">
+                            </object>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
